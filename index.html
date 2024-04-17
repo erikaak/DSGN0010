@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Interactive p5.js Sketch</title>
+    <link rel="stylesheet" href="styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
+</head>
+<body>
+    <div class="container">
+        <p id="intro">Tell me about <span id="ellipsis">...</span></p>
+        <input type="text" id="userInput" placeholder="Enter your text here">
+        <select id="fontSelector">
+            <option value="Arial">Arial</option>
+            <option value="Georgia">Georgia</option>
+            <option value="Monospace">Monospace</option>
+            <option value="Verdana">Verdana</option>
+        </select>
+        <select id="colorSelector">
+            <option value="#FFC864">Bright Orange</option>
+            <option value="#FF9632">Orange-Yellow</option>
+            <option value="#FFC832">Bright Yellow</option>
+            <option value="#C8FF32">Lime Green</option>
+            <option value="#32FF64">Bright Green</option>
+            <option value="#32C8FF">Bright Cyan</option>
+            <option value="#6496FF">Light Blue</option>
+            <option value="#C864FF">Violet</option>
+            <option value="#FF64C8">Magenta</option>
+            <option value="#FF6464">Pink</option>
+            <option value="#FFFFFF">White</option>
+        </select>
+        <button id="submitBtn" onclick="updateText()">Submit</button>
+    </div>
+
+    <div id="webglCanvas"></div>
+
+    <script src="sketch.js"></script>
+</body>
+</html>

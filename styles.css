@@ -1,0 +1,75 @@
+body {
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: row;
+    height: 100vh;
+}
+
+.container {
+    width: 33.33%;
+    background-color: #fff;
+    padding: 20px;
+    box-sizing: border-box;
+    overflow-y: auto; /* Add a scrollbar if content overflows */
+}
+
+#webglCanvas {
+    width: 66.66%;
+    height: 100vh;
+    background-color: #000;
+}
+
+.container p#intro {
+    font-size: 24px;
+    text-align: center;
+    width: 100%;
+    margin-bottom: 10px; /* Reduced margin-bottom */
+    order: -1; /* Place the text above interactive elements */
+}
+
+#userInput {
+    width: calc(100% - 40px); /* Account for padding */
+    padding: 10px; /* Reduced padding */
+    border: 2px solid #ccc;
+    border-radius: 20px;
+    margin-bottom: 10px; /* Reduced margin-bottom */
+    font-size: 18px;
+    outline: none;
+}
+
+#userInput::placeholder {
+    color: #666;
+}
+
+#userInput:focus {
+    border-color: #4c8bf5;
+}
+
+#submitBtn {
+    padding: 10px 20px; /* Adjust padding as needed */
+    background-color: #000000;
+    color: #fff;
+    border: none;
+    border-radius: 20px;
+    cursor: pointer;
+    outline: none;
+    transition: background-color 0.3s;
+    font-size: 16px;
+}
+
+#submitBtn:hover {
+    background-color: #3b6cb5;
+}
+
+#ellipsis {
+    display: inline-block;
+    animation: blink 1s infinite;
+}
+
+@keyframes blink {
+    0% { opacity: 0; }
+    50% { opacity: 1; }
+    100% { opacity: 0; }
+}
