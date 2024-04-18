@@ -5,6 +5,9 @@
     <title>Interactive p5.js Sketch</title>
     <link rel="stylesheet" href="styles.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
+    <!-- Include Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-database.js"></script>
 </head>
 <body>
     <div class="container">
@@ -29,10 +32,72 @@
             <option value="#FF6464">Pink</option>
             <option value="#FFFFFF">White</option>
         </select>
-        <button id="submitBtn" onclick="updateText()">Submit</button>
+        <button id="submitBtn">Submit</button>
     </div>
 
     <div id="webglCanvas"></div>
+
+    <script>
+        // Your web app's Firebase configuration
+        var firebaseConfig = {
+            apiKey: "AIzaSyCr0modZkiiHbrYsSCQijpiCkPWE7v7Lag",
+            authDomain: "dsgn-0010-final-project.firebaseapp.com",
+            databaseURL: "https://dsgn-0010-final-project-default-rtdb.firebaseio.com",
+            projectId: "dsgn-0010-final-project",
+            storageBucket: "dsgn-0010-final-project.appspot.com",
+            messagingSenderId: "764278519998",
+            appId: "1:764278519998:web:81efd8f6ea0768ccc6c6ef"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+
+        // Reference to Firebase Realtime Database
+        var database = firebase.database();
+
+        // Submit button click event
+        document.getElementById("submitBtn").addEventListener("click", function() {
+            updateText();
+            saveToFirebase();
+        });
+
+        // Function to update text
+        function updateText() {
+            let inputText = document.getElementById('userInput').value.trim();
+            let selectedFont = document.getElementById('fontSelector').value;
+            let selectedColor = document.getElementById('colorSelector').value;
+            if (inputText !== "") {
+                // Update the p5.js sketch with user input
+                objects.push({
+                    x: random(-200, 200),
+                    y: random(-200, 200),
+                    z: random(-200, 200),
+                    speed: random(1, 5),
+                    direction: random([-1, 1]),
+                    color: selectedColor,
+                    font: selectedFont,
+                    text: inputText
+                });
+                document.getElementById('userInput').value = '';
+            }
+        }
+
+        // Function to save user input to Firebase Realtime Database
+        function saveToFirebase() {
+            let inputText = document.getElementById('userInput').value.trim();
+            let selectedFont = document.getElementById('fontSelector').value;
+            let selectedColor = document.getElementById('colorSelector').value;
+            if (inputText !== "") {
+                // Push user input data to Firebase database
+                database.ref('userInput').push({
+                    text: inputText,
+                    font: selectedFont,
+                    color: selectedColor,
+                    timestamp: firebase.database.ServerValue.TIMESTAMP
+                });
+            }
+        }
+    </script>
 
     <script src="sketch.js"></script>
 </body>
