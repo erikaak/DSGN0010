@@ -154,23 +154,27 @@ function listenForParticleUpdates() {
   });
 }
 
+
 function listenForUpdates() {
-  const database = firebase.database();
-  database.ref('userInputs').on('child_added', function(snapshot) {
-    const data = snapshot.val();
-    if (data) {
-      objects.push({
-        x: random(-200, 200),
-        y: random(-200, 200),
-        z: random(-200, 200),
-        speed: random(1, 5),
-        direction: random([-1, 1]),
-        color: data.color,
-        font: data.font,
-        text: data.text
-      });
-    }
-  });
+    const database = firebase.database();
+    database.ref('userInputs').on('child_added', function(snapshot) {
+        const data = snapshot.val();
+        if (data) {
+            let obj = {
+                x: random(-200, 200),
+                y: random(-200, 200),
+                z: random(-200, 200),
+                speed: random(1, 5),
+                direction: random([-1, 1]),
+                color: data.color,
+                font: data.font,
+                text: data.text
+            };
+            objects.push(obj);
+            // Ensure the camera is focused on the newly added text object
+            resetView();
+        }
+    });
 }
 
 function resetView() {
