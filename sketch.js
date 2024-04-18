@@ -166,8 +166,26 @@ function listenForUpdates() {
 }
 
 function resetView() {
-  // Assuming the default position and orientation you want is the original setup
-  // Reset transformations and any scaling applied by orbitControl
-  resetMatrix(); // Resets the transformation matrix
-  camera();      // Resets the camera to the default settings
+    // Check if there are any objects to focus on
+    if (objects.length > 0) {
+        let sumX = 0, sumY = 0, sumZ = 0;
+
+        // Calculate the centroid of all objects
+        for (let obj of objects) {
+            sumX += obj.x;
+            sumY += obj.y;
+            sumZ += obj.z;
+        }
+
+        let centerX = sumX / objects.length;
+        let centerY = sumY / objects.length;
+        let centerZ = sumZ / objects.length;
+
+        // Set the camera to look at the centroid of the objects
+        // Adjust these values as needed to get a better view
+        camera(centerX, centerY, centerZ + (height/2) / tan(PI/6), centerX, centerY, centerZ, 0, 1, 0);
+    } else {
+        // If no objects, just reset to default view
+        camera();
+    }
 }
