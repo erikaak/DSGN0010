@@ -108,22 +108,30 @@ function draw() {
 }
 
 function displayObjects() {
-  objects.forEach(obj => {
-    push();
-    translate(obj.x, obj.y, obj.z);
-    fill(obj.color);
-    textFont(obj.font);
-    textSize(24);
-    text(obj.text, 0, 0);
-    pop();
+    // Check if the text is going out of the viewable area and adjust
+    objects.forEach(obj => {
+        push();
+        // Translate to the object's position
+        translate(obj.x, obj.y, obj.z);
+        fill(obj.color);
+        textFont(obj.font);
+        textSize(24); // Ensure text size is visible
 
-    obj.z += obj.speed * obj.direction;
-    if ((obj.direction === 1 && obj.z > 200) || (obj.direction === -1 && obj.z < -200)) {
-      obj.direction *= -1;
-    }
-  });
+        // Ensure the text is within the viewable range
+        if (obj.x > width || obj.y > height || obj.z > 500 || obj.x < -width || obj.y < -height || obj.z < -500) {
+            console.log("Text out of view: ", obj.text);
+        } else {
+            text(obj.text, 0, 0);
+        }
+        pop();
+
+        // Simulate object movement or static behavior
+        obj.z += obj.speed * obj.direction;
+        if ((obj.direction === 1 && obj.z > 200) || (obj.direction === -1 && obj.z < -200)) {
+            obj.direction *= -1; // Change direction at boundaries
+        }
+    });
 }
-
 function displayParticles() {
   particles.forEach(p => {
     fill(p.color);
@@ -167,27 +175,21 @@ function listenForUpdates() {
 
 function resetView() {
     if (objects.length > 0) {
-        // Calculate the centroid of text objects only
-        let sumX = 0, sumY = 0, sumZ = 0;
+        let centerX = 0, centerY = 0, centerZ = 0;
+        // Calculate the average position of all text objects
+        objects.forEach(obj => {
+            centerX += obj.x;
+            centerY += obj.y;
+            centerZ += obj.z;
+        });
+        centerX /= objects.length;
+        centerY /= objects.length;
+        centerZ /= objects.length;
 
-        for (let obj of objects) {
-            sumX += obj.x;
-            sumY += obj.y;
-            sumZ += obj.z;
-        }
-
-        let centerX = sumX / objects.length;
-        let centerY = sumY / objects.length;
-        let centerZ = sumZ / objects.length;
-
-        // Set the camera to look at the centroid of text objects
-        // Adjust the third parameter as needed to ensure a suitable distance
-        let offsetZ = 300; // Distance offset to view the objects clearly
-        camera(centerX, centerY, centerZ + offsetZ, centerX, centerY, centerZ, 0, 1, 0);
+        // Focus the camera on this average position
+        camera(centerX, centerY, centerZ + 500, centerX, centerY, centerZ, 0, 1, 0);
     } else {
-        // Reset to default view if there are no text objects
-        camera(0, 0, (height/2) / tan(PI/6), 0, 0, 0, 0, 1, 0);
+        camera(); // Reset camera to default position
     }
 }
-
 
