@@ -112,6 +112,7 @@ function displayObjects() {
     push();
     translate(obj.x, obj.y, obj.z);
     fill(obj.color);
+    box(50); // Drawing a box for each text
     textFont(obj.font);
     textSize(24);
     text(obj.text, 0, 0);
@@ -167,23 +168,18 @@ function listenForUpdates() {
 
 function resetView() {
     if (objects.length > 0) {
-        // Calculate the centroid of text objects only
         let sumX = 0, sumY = 0, sumZ = 0;
-
-        for (let obj of objects) {
+        objects.forEach(obj => {
             sumX += obj.x;
             sumY += obj.y;
             sumZ += obj.z;
-        }
-
+        });
         let centerX = sumX / objects.length;
         let centerY = sumY / objects.length;
-        let centerZ = sumZ / objects.length - 500; // Subtracted 500 to set a reasonable default distance
+        let centerZ = sumZ / objects.length;
 
-        // Set the camera to look at the centroid of text objects
-        camera(centerX, centerY, centerZ + (height / 2) / tan(PI * 30.0 / 180.0), centerX, centerY, centerZ, 0, 1, 0);
+        camera(centerX, centerY, centerZ + 300, centerX, centerY, centerZ, 0, 1, 0);
     } else {
-        // Reset to default view if there are no text objects
         camera(0, 0, (height/2) / tan(PI/6), 0, 0, 0, 0, 1, 0);
     }
 }
