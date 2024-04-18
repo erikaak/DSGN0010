@@ -166,32 +166,24 @@ function listenForUpdates() {
 }
 
 function resetView() {
-  let centerX = 0, centerY = 0, centerZ = 0;
-  let textCount = 0; // Variable to count the number of text objects
+    if (objects.length > 0) {
+        // Calculate the centroid of text objects only
+        let sumX = 0, sumY = 0, sumZ = 0;
 
-  // Calculate the average position of text objects only
-  objects.forEach(obj => {
-    if (typeof obj.text !== 'undefined') { // Check if the object is a text object
-      centerX += obj.x;
-      centerY += obj.y;
-      centerZ += obj.z;
-      textCount++;
+        for (let obj of objects) {
+            sumX += obj.x;
+            sumY += obj.y;
+            sumZ += obj.z;
+        }
+
+        let centerX = sumX / objects.length;
+        let centerY = sumY / objects.length;
+        let centerZ = sumZ / objects.length - 500; // Subtracted 500 to set a reasonable default distance
+
+        // Set the camera to look at the centroid of text objects
+        camera(centerX, centerY, centerZ + (height / 2) / tan(PI * 30.0 / 180.0), centerX, centerY, centerZ, 0, 1, 0);
+    } else {
+        // Reset to default view if there are no text objects
+        camera(0, 0, (height/2) / tan(PI/6), 0, 0, 0, 0, 1, 0);
     }
-  });
-
-  // If there are text objects, calculate the average position and focus the camera
-  if (textCount > 0) {
-    centerX /= textCount;
-    centerY /= textCount;
-    centerZ /= textCount;
-    camera(centerX, centerY, centerZ + 500, centerX, centerY, centerZ, 0, 1, 0);
-  } else {
-    camera(); // Reset camera to default position
-  }
-
-  // Remove data from Firebase if "xxx" is inputted
-  if (particles.length === 0 && objects.length === 0) {
-    database.ref('particles').remove();
-    database.ref('userInputs').remove();
-  }
 }
