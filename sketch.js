@@ -176,20 +176,28 @@ function listenForUpdates() {
 function resetView() {
     if (objects.length > 0) {
         let centerX = 0, centerY = 0, centerZ = 0;
-        // Calculate the average position of all text objects
-        objects.forEach(obj => {
-            centerX += obj.x;
-            centerY += obj.y;
-            centerZ += obj.z;
-        });
-        centerX /= objects.length;
-        centerY /= objects.length;
-        centerZ /= objects.length;
+        let textCount = 0; // Variable to count the number of text objects
 
-        // Focus the camera on this average position
-        camera(centerX, centerY, centerZ + 500, centerX, centerY, centerZ, 0, 1, 0);
+        // Calculate the average position of text objects only
+        objects.forEach(obj => {
+            if (typeof obj.text !== 'undefined') { // Check if the object is a text object
+                centerX += obj.x;
+                centerY += obj.y;
+                centerZ += obj.z;
+                textCount++;
+            }
+        });
+
+        // If there are text objects, calculate the average position and focus the camera
+        if (textCount > 0) {
+            centerX /= textCount;
+            centerY /= textCount;
+            centerZ /= textCount;
+            camera(centerX, centerY, centerZ + 500, centerX, centerY, centerZ, 0, 1, 0);
+        } else {
+            camera(); // Reset camera to default position
+        }
     } else {
         camera(); // Reset camera to default position
     }
 }
-
