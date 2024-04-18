@@ -166,26 +166,20 @@ function listenForUpdates() {
 }
 
 function resetView() {
-    // Check if there are any objects to focus on
     if (objects.length > 0) {
-        let sumX = 0, sumY = 0, sumZ = 0;
+        let latest = objects[objects.length - 1]; // Focus on the latest added object
 
-        // Calculate the centroid of all objects
-        for (let obj of objects) {
-            sumX += obj.x;
-            sumY += obj.y;
-            sumZ += obj.z;
-        }
+        // Calculate a point in front of the latest object to place the camera
+        let offset = 300; // Adjust this offset based on your scene scale
+        let cameraX = latest.x;
+        let cameraY = latest.y;
+        let cameraZ = latest.z + offset;
 
-        let centerX = sumX / objects.length;
-        let centerY = sumY / objects.length;
-        let centerZ = sumZ / objects.length;
-
-        // Set the camera to look at the centroid of the objects
-        // Adjust these values as needed to get a better view
-        camera(centerX, centerY, centerZ + (height/2) / tan(PI/6), centerX, centerY, centerZ, 0, 1, 0);
+        // Set the camera to look at the latest object
+        camera(cameraX, cameraY, cameraZ, latest.x, latest.y, latest.z, 0, 1, 0);
     } else {
-        // If no objects, just reset to default view
-        camera();
+        // Reset to a default view if there are no objects
+        camera(0, 0, (height/2) / tan(PI/6), 0, 0, 0, 0, 1, 0);
     }
 }
+
