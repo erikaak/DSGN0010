@@ -94,6 +94,10 @@ function setup() {
   // Listen for updates from Firebase
   listenForUpdates();
   listenForParticleUpdates();
+
+  // Setup button to reset view
+  const resetViewBtn = select('#resetViewBtn');
+  resetViewBtn.mousePressed(resetView);
 }
 
 function draw() {
@@ -159,4 +163,11 @@ function listenForUpdates() {
       });
     }
   });
+}
+
+function resetView() {
+  // Assuming the default position and orientation you want is the original setup
+  // Reset transformations and any scaling applied by orbitControl
+  resetMatrix(); // Resets the transformation matrix
+  camera();      // Resets the camera to the default settings
 }
