@@ -4,10 +4,10 @@
     <meta charset="UTF-8">
     <title>Interactive p5.js Sketch</title>
     <link rel="stylesheet" href="styles.css">
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
-    <!-- Include Firebase SDK -->
-    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-database.js"></script>
 </head>
 <body>
     <div class="container">
@@ -37,9 +37,10 @@
 
     <div id="webglCanvas"></div>
 
+    <script src="sketch.js"></script>
     <script>
         // Your web app's Firebase configuration
-        var firebaseConfig = {
+        const firebaseConfig = {
             apiKey: "AIzaSyCr0modZkiiHbrYsSCQijpiCkPWE7v7Lag",
             authDomain: "dsgn-0010-final-project.firebaseapp.com",
             databaseURL: "https://dsgn-0010-final-project-default-rtdb.firebaseio.com",
@@ -51,54 +52,40 @@
 
         // Initialize Firebase
         firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
 
-        // Reference to Firebase Realtime Database
-        var database = firebase.database();
-
-        // Submit button click event
         document.getElementById("submitBtn").addEventListener("click", function() {
-            updateText();
-            saveToFirebase();
-        });
-
-        // Function to update text
-        function updateText() {
-            let inputText = document.getElementById('userInput').value.trim();
-            let selectedFont = document.getElementById('fontSelector').value;
-            let selectedColor = document.getElementById('colorSelector').value;
+            const inputText = document.getElementById('userInput').value.trim();
+            const selectedFont = document.getElementById('fontSelector').value;
+            const selectedColor = document.getElementById('colorSelector').value;
             if (inputText !== "") {
-                // Update the p5.js sketch with user input
-                objects.push({
-                    x: random(-200, 200),
-                    y: random(-200, 200),
-                    z: random(-200, 200),
-                    speed: random(1, 5),
-                    direction: random([-1, 1]),
-                    color: selectedColor,
-                    font: selectedFont,
-                    text: inputText
-                });
-                document.getElementById('userInput').value = '';
-            }
-        }
-
-        // Function to save user input to Firebase Realtime Database
-        function saveToFirebase() {
-            let inputText = document.getElementById('userInput').value.trim();
-            let selectedFont = document.getElementById('fontSelector').value;
-            let selectedColor = document.getElementById('colorSelector').value;
-            if (inputText !== "") {
-                // Push user input data to Firebase database
-                database.ref('userInput').push({
+                const inputData = {
                     text: inputText,
                     font: selectedFont,
                     color: selectedColor,
                     timestamp: firebase.database.ServerValue.TIMESTAMP
-                });
+                };
+                saveToFirebase(inputData);
+                document.getElementById('userInput').value = '';
             }
+        });
+
+        function saveToFirebase(data) {
+            database.ref('userInputs').push(data);
+        }
+
+        database.ref('userInputs').on('child_added', function(snapshot) {
+            const data = snapshot.val();
+            if (data) {
+                // Call a function defined in sketch.js to add this new input to the sketch
+                addNewInputToSketch(data.text, data.font, data.color);
+            }
+        });
+
+        function addNewInputToSketch(text, font, color) {
+            // This function should be defined in your sketch.js
+            // It should handle adding new text with the specified properties to the canvas
         }
     </script>
-
-    <script src="sketch.js"></script>
 </body>
 </html>
