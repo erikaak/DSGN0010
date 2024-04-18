@@ -85,6 +85,8 @@ function setup() {
   graphics.textAlign(CENTER, CENTER);
   pixelDensity(1);
   noCursor();
+
+  listenForUpdates();
 }
 
 function updateText() {
@@ -194,4 +196,23 @@ function addNewObject(data) {
       font: data.font,
       text: data.text
   });
+}
+
+function listenForUpdates() {
+    const database = firebase.database();
+    database.ref('userInputs').on('child_added', function(snapshot) {
+        const data = snapshot.val();
+        if (data) {
+            objects.push({
+                x: random(-200, 200),
+                y: random(-200, 200),
+                z: random(-200, 200),
+                speed: random(1, 5),
+                direction: random([-1, 1]),
+                color: data.color,
+                font: data.font,
+                text: data.text
+            });
+        }
+    });
 }
