@@ -187,23 +187,3 @@ function resetView() {
         camera(0, 0, (height/2) / tan(PI/6), 0, 0, 0, 0, 1, 0);
     }
 }
-
-
-function updateText() {
-  let inputText = document.getElementById('userInput').value.trim();
-  let selectedFont = document.getElementById('fontSelector').value;
-  let selectedColor = document.getElementById('colorSelector').value;
-  if (inputText !== "") {
-      objects.push({
-          x: random(-200, 200),
-          y: random(-200, 200),
-          z: random(-200, 200),
-          speed: random(1, 5),
-          direction: random([-1, 1]),
-          color: selectedColor,
-          font: selectedFont,
-          text: inputText
-      });
-      document.getElementById('userInput').value = '';
-  }
-}
