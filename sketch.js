@@ -175,15 +175,23 @@ function mousePressed() {
   }
 }
 
-function addNewInputToSketch(text, font, color) {
-    objects.push({
-        x: random(-200, 200),
-        y: random(-200, 200),
-        z: random(-200, 200),
-        speed: random(1, 5),
-        direction: random([-1, 1]),
-        color: color,
-        font: font,
-        text: text
-    });
+function initFirebaseObjects() {
+  const database = firebase.database();
+  database.ref('userInputs').on('child_added', function(snapshot) {
+      const data = snapshot.val();
+      addNewObject(data);
+  });
+}
+
+function addNewObject(data) {
+  objects.push({
+      x: random(-200, 200),
+      y: random(-200, 200),
+      z: random(-200, 200),
+      speed: random(1, 5),
+      direction: random([-1, 1]),
+      color: data.color,
+      font: data.font,
+      text: data.text
+  });
 }
