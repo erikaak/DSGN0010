@@ -167,19 +167,27 @@ function listenForUpdates() {
 
 function resetView() {
     if (objects.length > 0) {
-        let latest = objects[objects.length - 1]; // Focus on the latest added object
+        // Calculate the centroid of text objects only
+        let sumX = 0, sumY = 0, sumZ = 0;
 
-        // Calculate a point in front of the latest object to place the camera
-        let offset = 300; // Adjust this offset based on your scene scale
-        let cameraX = latest.x;
-        let cameraY = latest.y;
-        let cameraZ = latest.z + offset;
+        for (let obj of objects) {
+            sumX += obj.x;
+            sumY += obj.y;
+            sumZ += obj.z;
+        }
 
-        // Set the camera to look at the latest object
-        camera(cameraX, cameraY, cameraZ, latest.x, latest.y, latest.z, 0, 1, 0);
+        let centerX = sumX / objects.length;
+        let centerY = sumY / objects.length;
+        let centerZ = sumZ / objects.length;
+
+        // Set the camera to look at the centroid of text objects
+        // Adjust the third parameter as needed to ensure a suitable distance
+        let offsetZ = 300; // Distance offset to view the objects clearly
+        camera(centerX, centerY, centerZ + offsetZ, centerX, centerY, centerZ, 0, 1, 0);
     } else {
-        // Reset to a default view if there are no objects
+        // Reset to default view if there are no text objects
         camera(0, 0, (height/2) / tan(PI/6), 0, 0, 0, 0, 1, 0);
     }
 }
+
 
