@@ -174,3 +174,16 @@ function mousePressed() {
     particles = [];
   }
 }
+
+function addNewInputToSketch(text, font, color) {
+    objects.push({
+        x: random(-200, 200),
+        y: random(-200, 200),
+        z: random(-200, 200),
+        speed: random(1, 5),
+        direction: random([-1, 1]),
+        color: color,
+        font: font,
+        text: text
+    });
+}
