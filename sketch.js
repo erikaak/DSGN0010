@@ -56,6 +56,7 @@ class Particle {
       let newParticle = new Particle(this.pos.x, this.pos.y, random(-5, 5), random(-5, 5));
       // Add the new particle to the global particles array
       particles.push(newParticle);
+      database.ref('particles').push(newParticle.serialize());
     }
   }
 }
@@ -85,6 +86,9 @@ function setup() {
   graphics.textAlign(CENTER, CENTER);
   pixelDensity(1);
   noCursor();
+  
+  listenForUpdates();
+  listenForParticleUpdates();
 }
 
 function updateText() {
@@ -219,4 +223,32 @@ function resetView() {
     // Reset to default view if there are no text objects
     camera(0, 0, (height/2) / tan(PI/6), 0, 0, 0, 0, 1, 0);
   }
+}
+
+
+function listenForParticleUpdates() {
+  const particleRef = firebase.database().ref('particles');
+  particleRef.on('child_added', snapshot => {
+    const p = snapshot.val();
+    particles.push(new Particle(p.x, p.y, p.vx, p.vy, p.color));
+  });
+}
+
+function listenForUpdates() {
+  const database = firebase.database();
+  database.ref('userInputs').on('child_added', function(snapshot) {
+    const data = snapshot.val();
+    if (data) {
+      objects.push({
+        x: random(-200, 200),
+        y: random(-200, 200),
+        z: random(-200, 200),
+        speed: random(1, 5),
+        direction: random([-1, 1]),
+        color: data.color,
+        font: data.font,
+        text: data.text
+      });
+    }
+  });
 }
