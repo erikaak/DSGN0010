@@ -96,7 +96,7 @@ function setup() {
   listenForParticleUpdates();
 
   // Setup button to reset view
-  const resetViewBtn = select('#resetViewBtn');
+  const resetViewBtn = createButton('Reset View');
   resetViewBtn.mousePressed(resetView);
 }
 
@@ -108,30 +108,22 @@ function draw() {
 }
 
 function displayObjects() {
-    // Check if the text is going out of the viewable area and adjust
-    objects.forEach(obj => {
-        push();
-        // Translate to the object's position
-        translate(obj.x, obj.y, obj.z);
-        fill(obj.color);
-        textFont(obj.font);
-        textSize(24); // Ensure text size is visible
+  objects.forEach(obj => {
+    push();
+    translate(obj.x, obj.y, obj.z);
+    fill(obj.color);
+    textFont(obj.font);
+    textSize(24);
+    text(obj.text, 0, 0);
+    pop();
 
-        // Ensure the text is within the viewable range
-        if (obj.x > width || obj.y > height || obj.z > 500 || obj.x < -width || obj.y < -height || obj.z < -500) {
-            console.log("Text out of view: ", obj.text);
-        } else {
-            text(obj.text, 0, 0);
-        }
-        pop();
-
-        // Simulate object movement or static behavior
-        obj.z += obj.speed * obj.direction;
-        if ((obj.direction === 1 && obj.z > 200) || (obj.direction === -1 && obj.z < -200)) {
-            obj.direction *= -1; // Change direction at boundaries
-        }
-    });
+    obj.z += obj.speed * obj.direction;
+    if ((obj.direction === 1 && obj.z > 200) || (obj.direction === -1 && obj.z < -200)) {
+      obj.direction *= -1;
+    }
+  });
 }
+
 function displayParticles() {
   particles.forEach(p => {
     fill(p.color);
@@ -154,7 +146,6 @@ function listenForParticleUpdates() {
   });
 }
 
-
 function listenForUpdates() {
   const database = firebase.database();
   database.ref('userInputs').on('child_added', function(snapshot) {
@@ -174,34 +165,33 @@ function listenForUpdates() {
   });
 }
 
-
 function resetView() {
-    let centerX = 0, centerY = 0, centerZ = 0;
-    let textCount = 0; // Variable to count the number of text objects
+  let centerX = 0, centerY = 0, centerZ = 0;
+  let textCount = 0; // Variable to count the number of text objects
 
-    // Calculate the average position of text objects only
-    objects.forEach(obj => {
-        if (typeof obj.text !== 'undefined') { // Check if the object is a text object
-            centerX += obj.x;
-            centerY += obj.y;
-            centerZ += obj.z;
-            textCount++;
-        }
-    });
-
-    // If there are text objects, calculate the average position and focus the camera
-    if (textCount > 0) {
-        centerX /= textCount;
-        centerY /= textCount;
-        centerZ /= textCount;
-        camera(centerX, centerY, centerZ + 500, centerX, centerY, centerZ, 0, 1, 0);
-    } else {
-        camera(); // Reset camera to default position
+  // Calculate the average position of text objects only
+  objects.forEach(obj => {
+    if (typeof obj.text !== 'undefined') { // Check if the object is a text object
+      centerX += obj.x;
+      centerY += obj.y;
+      centerZ += obj.z;
+      textCount++;
     }
+  });
 
-    // Remove data from Firebase if "xxx" is inputted
-    if (particles.length === 0 && objects.length === 0) {
-        database.ref('particles').remove();
-        database.ref('userInputs').remove();
-    }
+  // If there are text objects, calculate the average position and focus the camera
+  if (textCount > 0) {
+    centerX /= textCount;
+    centerY /= textCount;
+    centerZ /= textCount;
+    camera(centerX, centerY, centerZ + 500, centerX, centerY, centerZ, 0, 1, 0);
+  } else {
+    camera(); // Reset camera to default position
+  }
+
+  // Remove data from Firebase if "xxx" is inputted
+  if (particles.length === 0 && objects.length === 0) {
+    database.ref('particles').remove();
+    database.ref('userInputs').remove();
+  }
 }
