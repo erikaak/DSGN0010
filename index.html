@@ -5,7 +5,6 @@
     <title>Interactive p5.js Sketch</title>
     <link rel="stylesheet" href="styles.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
-    <!-- Updated Firebase SDK to use the compat version for easier syntax transitioning -->
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-database-compat.js"></script>
 </head>
@@ -32,13 +31,9 @@
             <option value="#FF6464">Pink</option>
             <option value="#FFFFFF">White</option>
         </select>
-        <button onclick="updateText()">Submit</button>
-        <button id="resetViewBtn">Reset View</button>
-<script>
-  document.getElementById('resetViewBtn').addEventListener('click', resetView);
-</script>
+        <button id="submitBtn" onclick="updateText()">Submit</button>
+        <button id="resetViewBtn" onclick="resetView()">Reset View</button>
     </div>
-
     <div id="webglCanvas"></div>
 
     <script>
