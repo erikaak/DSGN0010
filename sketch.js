@@ -38,24 +38,36 @@ void main() {
 
 // Particle class
 class Particle {
-  constructor(x, y, vx, vy) {
+  constructor(x, y, vx, vy, color = random(colorScheme)) {
     this.pos = createVector(x, y);
     this.vel = createVector(vx, vy);
-    this.color = random(colorScheme);
+    this.color = color;
   }
-  
+
   move() {
     this.pos.add(this.vel);
   }
-  
+
+  serialize() {
+    return {
+      x: this.pos.x,
+      y: this.pos.y,
+      vx: this.vel.x,
+      vy: this.vel.y,
+      color: this.color
+    };
+  }
+
   explode() {
-    // Create a certain number of smaller particles
-    let numParticles = int(random(5, 15)); // You can adjust the number of particles
+    let numParticles = int(random(5, 15));
     for (let i = 0; i < numParticles; i++) {
-      // Create particles with random velocities around the original particle's position
-      let newParticle = new Particle(this.pos.x, this.pos.y, random(-5, 5), random(-5, 5));
-      // Add the new particle to the global particles array
+      let angle = random(TWO_PI);
+      let speed = random(1, 3);
+      let vx = speed * cos(angle);
+      let vy = speed * sin(angle);
+      let newParticle = new Particle(this.pos.x, this.pos.y, vx, vy, this.color);
       particles.push(newParticle);
+      // Also send new particle data to Firebase
       database.ref('particles').push(newParticle.serialize());
     }
   }
@@ -90,6 +102,7 @@ function setup() {
   listenForUpdates();
   listenForParticleUpdates();
 }
+
 
 function updateText() {
   let inputText = document.getElementById('userInput').value.trim();
@@ -153,7 +166,9 @@ function draw() {
 }
 
 function mouseDragged() {
-  particles.push(new Particle(pmouseX - width / 2, pmouseY - height / 2, mouseX - pmouseX, mouseY - pmouseY));
+  let newParticle = new Particle(pmouseX - width / 2, pmouseY - height / 2, mouseX - pmouseX, mouseY - pmouseY);
+  particles.push(newParticle);
+  database.ref('particles').push(newParticle.serialize());
 }
 
 function mousePressed() {
