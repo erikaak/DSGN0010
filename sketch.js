@@ -161,6 +161,7 @@ function listenForUpdates() {
         const data = snapshot.val();
         if (data) {
             if (data.text === "xxx") {
+                console.log("Received command to clear particles and text.");
                 // Clear all particles and objects
                 particles = [];
                 objects = [];
