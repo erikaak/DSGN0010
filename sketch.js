@@ -101,6 +101,7 @@ function setup() {
   
   listenForUpdates();
   listenForParticleUpdates();
+
 }
 
 
@@ -108,49 +109,43 @@ function updateText() {
   let inputText = document.getElementById('userInput').value.trim();
   let selectedFont = document.getElementById('fontSelector').value;
   let selectedColor = document.getElementById('colorSelector').value;
-
-  // Check if the submit button is clicked
-  document.getElementById('submitButton').onclick = function() {
-    if (inputText !== "") {
-      addTextObject(inputText, selectedFont, selectedColor);
+  
+  if (inputText === "xxx") {
+    clearScreen();
+    redraw(); // Redraw the canvas after clearing
+    document.getElementById('userInput').value = '';
+    return; // Exit the function
+  }
+  
+  if (inputText !== "") {
+    // Add the text object to the array only when the user clicks "Submit"
+    document.getElementById('submitButton').onclick = function() {
+      objects.push({
+        x: random(-200, 200),
+        y: random(-200, 200),
+        z: random(-200, 200),
+        speed: random(1, 5),
+        direction: random([-1, 1]),
+        color: selectedColor,
+        font: selectedFont,
+        text: inputText
+      });
+      
       // Clear the input field after submitting
       document.getElementById('userInput').value = '';
+      
       // Redraw the canvas after adding the text object
       redraw();
-    }
-  };
-
-  // Optional: handle pressing "Enter" to submit text
-  document.getElementById('userInput').onkeypress = function(e) {
-    if (e.key === 'Enter' && inputText !== "") {
-      addTextObject(inputText, selectedFont, selectedColor);
-      // Clear the input field after submitting
-      document.getElementById('userInput').value = '';
-      // Redraw the canvas after adding the text object
-      redraw();
-      // Prevent the default action of pressing "Enter" (form submission)
-      e.preventDefault();
-    }
-  };
+    };
+  }
 }
 
-
-function addTextObject(text, font, color) {
-  objects.push({
-    x: random(-200, 200),
-    y: random(-200, 200),
-    z: random(-200, 200),
-    speed: random(1, 5),
-    direction: random([-1, 1]),
-    color: color,
-    font: font,
-    text: text
-  });
+function clearScreen() {
+  particles = []; // Clear particles array
+  objects = []; // Clear objects array
 }
-
 
 function draw() {
-  updateText();
   
   background(0);
   orbitControl();
@@ -294,4 +289,4 @@ function listenForUpdates() {
       });
     }
   });
-}
+} 
