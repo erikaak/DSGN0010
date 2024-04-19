@@ -131,7 +131,6 @@ function updateText() {
 function clearScreen() {
   particles = []; // Clear particles array
   objects = []; // Clear objects array
-  // You may need additional code here to clear other elements if necessary
 }
 
 function draw() {
