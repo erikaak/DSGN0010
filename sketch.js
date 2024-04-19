@@ -68,7 +68,13 @@ let colorScheme = [
 // Firebase setup
 function setupFirebase() {
   const firebaseConfig = {
-    // Your Firebase configuration
+    apiKey: "AIzaSyCr0modZkiiHbrYsSCQijpiCkPWE7v7Lag",
+    authDomain: "dsgn-0010-final-project.firebaseapp.com",
+    databaseURL: "https://dsgn-0010-final-project-default-rtdb.firebaseio.com",
+    projectId: "dsgn-0010-final-project",
+    storageBucket: "dsgn-0010-final-project.appspot.com",
+    messagingSenderId: "764278519998",
+    appId: "1:764278519998:web:81efd8f6ea0768ccc6c6ef"
   };
   firebase.initializeApp(firebaseConfig);
 }
