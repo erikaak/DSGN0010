@@ -130,7 +130,7 @@ function draw() {
     background(0);
     orbitControl();
 
-    // Display text objects and associated cubes
+    // Display all objects
     objects.forEach(obj => {
         push();
         translate(obj.x, obj.y, obj.z);
@@ -138,24 +138,16 @@ function draw() {
         textFont(obj.font);
         textSize(24);
         text(obj.text, 0, 0);
-        // Drawing a cube at the same location as the text
-        stroke(255); // White outline for visibility
-        noFill(); // No fill to see through the cube
+        // Draw a cube associated with each text
+        translate(0, 0, 25); // Move the cube slightly behind the text
         box(50); // Draw a cube of 50x50x50 units
         pop();
 
-        // Update object movement based on its direction and speed
+        // Update object position based on its direction and speed
         obj.z += obj.speed * obj.direction;
-        if (obj.direction === 1 && obj.z > 200 || obj.direction === -1 && obj.z < -200) {
+        if ((obj.direction === 1 && obj.z > 200) || (obj.direction === -1 && obj.z < -200)) {
             obj.direction *= -1; // Change direction when reaching bounds
         }
-    });
-
-    // Display particles
-    particles.forEach(p => {
-        fill(p.color);
-        ellipse(p.pos.x, p.pos.y, 8, 8);
-        p.move();
     });
 }
 
