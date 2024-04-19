@@ -108,25 +108,45 @@ function updateText() {
   let inputText = document.getElementById('userInput').value.trim();
   let selectedFont = document.getElementById('fontSelector').value;
   let selectedColor = document.getElementById('colorSelector').value;
+  
   if (inputText === "xxx") {
-    clearScreen();
+    clearDatabase(); // Clear the database
+    clearScreen(); // Clear the canvas
     redraw(); // Redraw the canvas after clearing
     document.getElementById('userInput').value = '';
     return; // Exit the function
   }
+  
   if (inputText !== "") {
-      objects.push({
-          x: random(-200, 200),
-          y: random(-200, 200),
-          z: random(-200, 200),
-          speed: random(1, 5),
-          direction: random([-1, 1]),
-          color: selectedColor,
-          font: selectedFont,
-          text: inputText
-      });
+    // Add the text object to the array only when the user clicks "Submit"
+    document.getElementById('submitButton').onclick = function() {
+      addObjectToCanvas(inputText, selectedFont, selectedColor);
+      // Clear the input field after submitting
       document.getElementById('userInput').value = '';
+      
+      // Redraw the canvas after adding the text object
+      redraw();
+    };
   }
+}
+
+function clearDatabase() {
+  // Clear Firebase database
+  firebase.database().ref('userInputs').remove();
+}
+
+function addObjectToCanvas(text, font, color) {
+  // Add the text object to the array
+  objects.push({
+    x: random(-200, 200),
+    y: random(-200, 200),
+    z: random(-200, 200),
+    speed: random(1, 5),
+    direction: random([-1, 1]),
+    color: color,
+    font: font,
+    text: text
+  });
 }
 
 function clearScreen() {
