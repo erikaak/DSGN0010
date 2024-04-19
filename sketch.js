@@ -120,25 +120,28 @@ function updateText() {
   if (inputText !== "") {
     // Add the text object to the array only when the user clicks "Submit"
     document.getElementById('submitButton').onclick = function() {
-      objects.push({
-        x: random(-200, 200),
-        y: random(-200, 200),
-        z: random(-200, 200),
-        speed: random(1, 5),
-        direction: random([-1, 1]),
-        color: selectedColor,
-        font: selectedFont,
-        text: inputText
-      });
-      
+      addTextObject(inputText, selectedFont, selectedColor);
       // Clear the input field after submitting
       document.getElementById('userInput').value = '';
-      
       // Redraw the canvas after adding the text object
       redraw();
     };
   }
 }
+
+function addTextObject(text, font, color) {
+  objects.push({
+    x: random(-200, 200),
+    y: random(-200, 200),
+    z: random(-200, 200),
+    speed: random(1, 5),
+    direction: random([-1, 1]),
+    color: color,
+    font: font,
+    text: text
+  });
+}
+
 
 function clearScreen() {
   particles = []; // Clear particles array
