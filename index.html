@@ -95,6 +95,28 @@
                 timestamp: firebase.database.ServerValue.TIMESTAMP
             });
         }
+
+        function updateText() {
+            let inputText = document.getElementById('userInput').value.trim();
+            let selectedFont = document.getElementById('fontSelector').value;
+            let selectedColor = document.getElementById('colorSelector').value;
+            if (inputText !== "") {
+                let newTextObject = {
+                    x: random(-200, 200),
+                    y: random(-200, 200),
+                    z: random(-200, 200),
+                    speed: random(1, 5),
+                    direction: random([-1, 1]),
+                    color: selectedColor,
+                    font: selectedFont,
+                    text: inputText
+                };
+                objects.push(newTextObject); // Immediately display text
+                database.ref('userInputs').push(newTextObject); // Push to Firebase
+                document.getElementById('userInput').value = ''; // Clear the input field
+            }
+        }
+        
     </script>
 
     <script src="sketch.js"></script>
