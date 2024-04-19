@@ -110,6 +110,7 @@ function updateText() {
   let selectedColor = document.getElementById('colorSelector').value;
   if (inputText === "xxx") {
     clearScreen();
+    redraw(); // Redraw the canvas after clearing
     document.getElementById('userInput').value = '';
     return; // Exit the function
   }
@@ -131,10 +132,11 @@ function updateText() {
 function clearScreen() {
   particles = []; // Clear particles array
   objects = []; // Clear objects array
-  // You may need additional code here to clear other elements if necessary
 }
 
 function draw() {
+  updateText();
+  
   background(0);
   orbitControl();
   objects.forEach(obj => {
