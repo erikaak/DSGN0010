@@ -20,6 +20,7 @@ body {
     width: 66.66%;
     height: 100vh;
     background-color: #000;
+    cursor: pointer;
 }
 
 .container p#intro {
