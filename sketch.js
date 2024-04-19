@@ -120,6 +120,11 @@ function updateText() {
 function draw() {
   background(0);
   orbitControl();
+  displayObjects();
+  displayParticles();
+}
+
+function displayObjects() {
   objects.forEach(obj => {
     push();
     translate(obj.x, obj.y, obj.z);
@@ -128,19 +133,42 @@ function draw() {
     textSize(24);
     text(obj.text, 0, 0);
     pop();
+
+    // Update object movement
     obj.z += obj.speed * obj.direction;
     if ((obj.direction === 1 && obj.z > 200) || (obj.direction === -1 && obj.z < -200)) {
       obj.direction *= -1;
     }
   });
+}
 
-  // Display particles
+function displayParticles() {
   particles.forEach(p => {
     fill(p.color);
     ellipse(p.pos.x, p.pos.y, 8, 8);
     p.move();
   });
 }
+
+function mousePressed() {
+  if (mouseButton === RIGHT) {
+    // Clear all particles when right mouse button is clicked
+    particles = [];
+    console.log("Particles cleared"); // Optional: Console log for debugging
+  } else if (mouseButton === LEFT) {
+    let newParticle = new Particle(pmouseX - width / 2, pmouseY - height / 2, mouseX - pmouseX, mouseY - pmouseY);
+    particles.push(newParticle);
+    database.ref('particles').push(newParticle.serialize());
+  }
+}
+
+function mouseDragged() {
+  let newParticle = new Particle(pmouseX - width / 2, pmouseY - height / 2, mouseX - pmouseX, mouseY - pmouseY);
+  particles.push(newParticle);
+  database.ref('particles').push(newParticle.serialize());
+}
+
+
 
 function listenForParticleUpdates() {
   const particleRef = firebase.database().ref('particles');
@@ -190,30 +218,6 @@ function resetView() {
     } else {
         // Reset to default view if there are no text objects
         camera(0, 0, (height / 2) / tan(PI / 6), 0, 0, 0, 0, 1, 0);
-    }
-}
-
-function mousePressed() {
-    // Check if the right mouse button was pressed
-    if (mouseButton === RIGHT) {
-        particles = []; // Clear all particles
-        return; // Exit the function to avoid any other actions
-    }
-
-    // Check if the left mouse button was pressed
-    if (mouseButton === LEFT) {
-        // Randomly choose between changing color and exploding
-        let randomAction = random();
-        if (randomAction < 0.5) {
-            // Change color
-            let particleIndex = int(random(particles.length)); // Choose a random particle
-            particles[particleIndex].color = random(colorScheme); // Change its color to a random color
-        } else {
-            // Explode
-            let particleIndex = int(random(particles.length)); // Choose a random particle
-            particles[particleIndex].explode(); // Make it explode
-            particles.splice(particleIndex, 1); // Remove the original particle
-        }
     }
 }
 
