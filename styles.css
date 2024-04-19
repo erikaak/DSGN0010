@@ -21,6 +21,7 @@ body {
     height: 100vh;
     background-color: #000;
     cursor: pointer;
+    pointer-events: auto;
 }
 
 .container p#intro {
