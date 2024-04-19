@@ -302,7 +302,7 @@ function increaseTextSize() {
     // Check if mouse click is within the bounding box of the text object
     if (x >= minX && x <= maxX && y >= minY && y <= maxY) {
       // Increase text size
-      obj.textSize += 2; // Increase text size by 2 units
+      obj.textSize += 10; // Increase text size by 10 units
     }
   }
 }
