@@ -38,45 +38,19 @@ void main() {
 
 // Particle class
 class Particle {
-  constructor(x, y, vx, vy, color = random(colorScheme)) {
+  constructor(x, y, vx, vy, color) {
     this.pos = createVector(x, y);
     this.vel = createVector(vx, vy);
-    this.color = color;
+    this.color = color; // Set color directly instead of using random color
   }
-
+  
   move() {
     this.pos.add(this.vel);
-  }
-
-  serialize() {
-    return {
-      x: this.pos.x,
-      y: this.pos.y,
-      vx: this.vel.x,
-      vy: this.vel.y,
-      color: this.color
-    };
-  }
-
-  explode() {
-    let numParticles = int(random(5, 15));
-    for (let i = 0; i < numParticles; i++) {
-      let angle = random(TWO_PI);
-      let speed = random(1, 3);
-      let vx = speed * cos(angle);
-      let vy = speed * sin(angle);
-      let newParticle = new Particle(this.pos.x, this.pos.y, vx, vy, this.color);
-      particles.push(newParticle);
-      // Also send new particle data to Firebase
-      database.ref('particles').push(newParticle.serialize());
-    }
   }
 }
 
 // Array to hold particles
 let particles = [];
-let graphics; // 2D graphics buffer for text
-let objects = []; // Array to hold 3D objects
 let colorScheme = [
   [255, 200, 100],  // Bright orange
   [255, 150, 50],   // Bright orange-yellow
@@ -91,17 +65,44 @@ let colorScheme = [
   [255, 255, 255],  // White
 ];
 
+// Firebase setup
+function setupFirebase() {
+  const firebaseConfig = {
+    // Your Firebase configuration
+  };
+  firebase.initializeApp(firebaseConfig);
+}
+
 function setup() {
   createCanvas(windowWidth * 2/3, windowHeight, WEBGL).parent('webglCanvas');
-  graphics = createGraphics(windowWidth / 3, windowHeight);
-  graphics.textSize(20);
-  graphics.textAlign(CENTER, CENTER);
   pixelDensity(1);
   noCursor();
   
+  setupFirebase(); // Initialize Firebase
   listenForUpdates();
-  listenForParticleUpdates();
+  listenForParticleUpdates(); // Listen for real-time particle updates
 }
+
+function draw() {
+  background(0);
+  orbitControl();
+  
+  // Display particles
+  particles.forEach(p => {
+    fill(p.color);
+    ellipse(p.pos.x, p.pos.y, 8, 8);
+    p.move();
+  });
+}
+
+function listenForParticleUpdates() {
+  const particleRef = firebase.database().ref('particles');
+  particleRef.on('child_added', snapshot => {
+    const p = snapshot.val();
+    particles.push(new Particle(p.x, p.y, p.vx, p.vy, p.color));
+  });
+}
+
 
 
 function updateText() {
@@ -109,9 +110,9 @@ function updateText() {
   let selectedFont = document.getElementById('fontSelector').value;
   let selectedColor = document.getElementById('colorSelector').value;
   if (inputText === "xxx") {
-    clearScreen();
-    redraw(); // Redraw the canvas after clearing
+    clearScreen(); // Call clearScreen function when inputText is "xxx"
     document.getElementById('userInput').value = '';
+    redraw(); // Redraw the canvas after clearing
     return; // Exit the function
   }
   if (inputText !== "") {
