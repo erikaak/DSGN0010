@@ -108,26 +108,18 @@ function updateText() {
   let inputText = document.getElementById('userInput').value.trim();
   let selectedFont = document.getElementById('fontSelector').value;
   let selectedColor = document.getElementById('colorSelector').value;
-  
-  if (inputText === "xxx") {
-    clearScreen();
-    redraw(); // Redraw the canvas after clearing
-    document.getElementById('userInput').value = '';
-    return; // Exit the function
-  }
-  
-  if (inputText !== "") {
-    // Add the text object to the array only when the user clicks "Submit"
-    document.getElementById('submitButton').onclick = function() {
+
+  // Check if the submit button is clicked
+  document.getElementById('submitButton').onclick = function() {
+    if (inputText !== "") {
       addTextObject(inputText, selectedFont, selectedColor);
       // Clear the input field after submitting
       document.getElementById('userInput').value = '';
       // Redraw the canvas after adding the text object
       redraw();
-    };
-  }
+    }
+  };
 }
-
 function addTextObject(text, font, color) {
   objects.push({
     x: random(-200, 200),
