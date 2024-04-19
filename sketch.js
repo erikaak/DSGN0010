@@ -108,6 +108,11 @@ function updateText() {
   let inputText = document.getElementById('userInput').value.trim();
   let selectedFont = document.getElementById('fontSelector').value;
   let selectedColor = document.getElementById('colorSelector').value;
+  if (inputText === "xxx") {
+    clearScreen();
+    document.getElementById('userInput').value = '';
+    return; // Exit the function
+  }
   if (inputText !== "") {
       objects.push({
           x: random(-200, 200),
@@ -121,6 +126,12 @@ function updateText() {
       });
       document.getElementById('userInput').value = '';
   }
+}
+
+function clearScreen() {
+  particles = []; // Clear particles array
+  objects = []; // Clear objects array
+  // You may need additional code here to clear other elements if necessary
 }
 
 function draw() {
