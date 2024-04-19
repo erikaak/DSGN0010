@@ -1,4 +1,4 @@
-// Shader code with color scheme support
+/ Shader code with color scheme support
 let vertShader = `
 precision mediump float;
 attribute vec3 aPosition;
@@ -111,8 +111,7 @@ function updateText() {
   let selectedColor = document.getElementById('colorSelector').value;
   
   if (inputText === "xxx") {
-    clearDatabase(); // Clear the database
-    clearScreen(); // Clear the canvas
+    clearScreen();
     redraw(); // Redraw the canvas after clearing
     document.getElementById('userInput').value = '';
     return; // Exit the function
@@ -121,7 +120,17 @@ function updateText() {
   if (inputText !== "") {
     // Add the text object to the array only when the user clicks "Submit"
     document.getElementById('submitButton').onclick = function() {
-      addObjectToCanvas(inputText, selectedFont, selectedColor);
+      objects.push({
+        x: random(-200, 200),
+        y: random(-200, 200),
+        z: random(-200, 200),
+        speed: random(1, 5),
+        direction: random([-1, 1]),
+        color: selectedColor,
+        font: selectedFont,
+        text: inputText
+      });
+      
       // Clear the input field after submitting
       document.getElementById('userInput').value = '';
       
@@ -131,23 +140,9 @@ function updateText() {
   }
 }
 
-function clearDatabase() {
-  // Clear Firebase database
-  firebase.database().ref('userInputs').remove();
-}
-
-function addObjectToCanvas(text, font, color) {
-  // Add the text object to the array
-  objects.push({
-    x: random(-200, 200),
-    y: random(-200, 200),
-    z: random(-200, 200),
-    speed: random(1, 5),
-    direction: random([-1, 1]),
-    color: color,
-    font: font,
-    text: text
-  });
+function clearScreen() {
+  particles = []; // Clear particles array
+  objects = []; // Clear objects array
 }
 
 function draw() {
@@ -168,7 +163,32 @@ function draw() {
       if ((obj.direction === 1 && obj.z > 200) || (obj.direction === -1 && obj.z < -200)) {
           obj.direction *= -1; // Change direction upon reaching a certain point
       }
-
+if (clickedObjectIndex !== -1) {
+    let clickedObject = objects[clickedObjectIndex];
+    let originalTextSize = 24; // Assuming fixed text size of 24 for simplicity, adjust as needed
+    let enlargedTextSize = 48; // Adjust as needed for dramatic increase
+    let textWidth = graphics.textWidth(clickedObject.text);
+    let textHeight = originalTextSize;
+    
+    // Draw enlarged text
+    push();
+    translate(clickedObject.x, clickedObject.y, clickedObject.z);
+    fill(clickedObject.color);
+    textSize(enlargedTextSize); // Set enlarged text size
+    text(clickedObject.text, 0, 0); // Draw text at object's location
+    pop();
+    
+    // Update position and direction of clicked object
+    clickedObject.z += clickedObject.speed * clickedObject.direction;
+    if ((clickedObject.direction === 1 && clickedObject.z > 200) || (clickedObject.direction === -1 && clickedObject.z < -200)) {
+      clickedObject.direction *= -1; // Change direction upon reaching a certain point
+    }
+    
+    // Reset clickedObjectIndex after a short delay
+    setTimeout(() => {
+      clickedObjectIndex = -1; // Reset clicked object index after a short delay
+    }, 1000); // Adjust delay as needed
+  }
   });
 
   graphics.clear();
@@ -200,25 +220,29 @@ function mouseDragged() {
 }
 
 function mousePressed() {
-  // Check if the mouse button pressed is the left mouse button
-  if (mouseButton === LEFT) {
-    // Randomly choose between changing color and exploding
-    let randomAction = random();
-    if (randomAction < 0.5) {
-      // Change color
-      let particleIndex = int(random(particles.length)); // Choose a random particle
-      particles[particleIndex].color = random(colorScheme); // Change its color to a random color
-    } else {
-      // Explode
-      let particleIndex = int(random(particles.length)); // Choose a random particle
-      particles[particleIndex].explode(); // Make it explode
-      particles.splice(particleIndex, 1); // Remove the original particle
-    }
-  }
-  
-  // Clear particles if right-clicked
+  clickedObjectIndex = -1; // Reset clicked object index
+
   if (mouseButton === RIGHT) {
     particles = [];
+  }
+  // Check if the mouse button pressed is the left mouse button
+  if (mouseButton === LEFT) {
+    // Check if the mouse is over any text object
+    for (let i = 0; i < objects.length; i++) {
+      let obj = objects[i];
+      let textWidth = graphics.textWidth(obj.text);
+      let textHeight = 24; // Assuming fixed text size of 24 for simplicity, adjust as needed
+      let leftBound = obj.x - textWidth / 2;
+      let rightBound = obj.x + textWidth / 2;
+      let topBound = obj.y - textHeight / 2;
+      let bottomBound = obj.y + textHeight / 2;
+      
+      // Check if mouse coordinates are within bounds of the text object
+      if (mouseX > leftBound && mouseX < rightBound && mouseY > topBound && mouseY < bottomBound) {
+        clickedObjectIndex = i; // Store the index of the clicked object
+        break; // Exit loop once a clicked object is found
+      }
+    }
   }
 }
 
