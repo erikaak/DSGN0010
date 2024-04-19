@@ -96,62 +96,67 @@ function setup() {
   listenForParticleUpdates();
 }
 
+
 function updateText() {
-  let inputText = document.getElementById('userInput').value.trim();
-  let selectedFont = document.getElementById('fontSelector').value;
-  let selectedColor = document.getElementById('colorSelector').value;
-  
-  if (inputText !== "") {
-    // Create a new text object with random positioning and the selected attributes
-    let newTextObject = {
-      x: random(-200, 200),
-      y: random(-200, 200),
-      z: random(-200, 200),
-      speed: random(1, 5),
-      direction: random([-1, 1]),
-      color: selectedColor,
-      font: selectedFont,
-      text: inputText
-    };
+    let inputText = document.getElementById('userInput').value.trim();
+    let selectedFont = document.getElementById('fontSelector').value;
+    let selectedColor = document.getElementById('colorSelector').value;
 
-    // Add the new text object to the local array for immediate display
-    objects.push(newTextObject);
+    if (inputText !== "") {
+        // Create a new object with the input text and other properties
+        let newTextObject = {
+            x: random(-200, 200), // Random position for demonstration
+            y: random(-200, 200),
+            z: random(-200, 200),
+            speed: random(1, 5), // Random speed for movement
+            direction: random([-1, 1]), // Random direction
+            color: selectedColor,
+            font: selectedFont,
+            text: inputText
+        };
 
-    // Push the new object to Firebase for storage and synchronization
-    database.ref('userInputs').push(newTextObject);
+        // Add to the objects array for immediate display
+        objects.push(newTextObject);
 
-    // Clear the input field
-    document.getElementById('userInput').value = '';
-  }
+        // Optionally push to Firebase for persistence
+        database.ref('userInputs').push(newTextObject);
+
+        // Clear the input field
+        document.getElementById('userInput').value = '';
+    }
 }
 
 function draw() {
-  background(0);
-  orbitControl();
+    background(0);
+    orbitControl();
 
-  // Display all text objects
-  objects.forEach(obj => {
-    push();
-    translate(obj.x, obj.y, obj.z);
-    fill(obj.color);
-    textFont(obj.font);
-    textSize(24);
-    text(obj.text, 0, 0);
-    pop();
+    // Display text objects and associated cubes
+    objects.forEach(obj => {
+        push();
+        translate(obj.x, obj.y, obj.z);
+        fill(obj.color);
+        textFont(obj.font);
+        textSize(24);
+        text(obj.text, 0, 0);
+        // Drawing a cube at the same location as the text
+        stroke(255); // White outline for visibility
+        noFill(); // No fill to see through the cube
+        box(50); // Draw a cube of 50x50x50 units
+        pop();
 
-    // Update object position based on its direction and speed
-    obj.z += obj.speed * obj.direction;
-    if ((obj.direction === 1 && obj.z > 200) || (obj.direction === -1 && obj.z < -200)) {
-      obj.direction *= -1;
-    }
-  });
+        // Update object movement based on its direction and speed
+        obj.z += obj.speed * obj.direction;
+        if (obj.direction === 1 && obj.z > 200 || obj.direction === -1 && obj.z < -200) {
+            obj.direction *= -1; // Change direction when reaching bounds
+        }
+    });
 
-  // Display particles
-  particles.forEach(p => {
-    fill(p.color);
-    ellipse(p.pos.x, p.pos.y, 8, 8);
-    p.move();
-  });
+    // Display particles
+    particles.forEach(p => {
+        fill(p.color);
+        ellipse(p.pos.x, p.pos.y, 8, 8);
+        p.move();
+    });
 }
 
 
