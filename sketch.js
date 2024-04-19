@@ -168,7 +168,23 @@ function draw() {
   });
 }
 
+function displayObjects() {
+  objects.forEach(obj => {
+    push();
+    translate(obj.x, obj.y, obj.z);
+    fill(obj.color);
+    textFont(obj.font);
+    textSize(24);
+    text(obj.text, 0, 0);
+    pop();
 
+    // Update object movement
+    obj.z += obj.speed * obj.direction;
+    if ((obj.direction === 1 && obj.z > 200) || (obj.direction === -1 && obj.z < -200)) {
+      obj.direction *= -1;
+    }
+  });
+}
 
 function displayParticles() {
   particles.forEach(p => {
