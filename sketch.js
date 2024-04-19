@@ -135,6 +135,8 @@ function clearScreen() {
 }
 
 function draw() {
+  updateText();
+  
   background(0);
   orbitControl();
   objects.forEach(obj => {
