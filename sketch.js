@@ -102,7 +102,6 @@ function setup() {
   listenForUpdates();
   listenForParticleUpdates();
 
-  canvas.addEventListener('click', increaseTextSize);
 }
 
 
@@ -283,26 +282,3 @@ function listenForUpdates() {
   });
 }
 
-function increaseTextSize() {
-  // Convert mouse coordinates from canvas space to screen space
-  let x = mouseX - width / 2;
-  let y = mouseY - height / 2;
-
-  // Loop through all text objects and check if the mouse click falls within their bounds
-  for (let obj of objects) {
-    let textWidth = textWidth(obj.text);
-    let textHeight = textAscent() + textDescent(); // Approximate text height
-
-    // Calculate bounding box of text object
-    let minX = obj.x - textWidth / 2;
-    let maxX = obj.x + textWidth / 2;
-    let minY = obj.y - textHeight / 2;
-    let maxY = obj.y + textHeight / 2;
-
-    // Check if mouse click is within the bounding box of the text object
-    if (x >= minX && x <= maxX && y >= minY && y <= maxY) {
-      // Increase text size
-      obj.textSize += 10; // Increase text size by 10 units
-    }
-  }
-}
