@@ -24,12 +24,12 @@ void main() {
     vec2 uv = particles[i].xy;
     float distance = length(st - uv);
     float glow = smoothstep(0.05, 0.0, 1.0 / distance);
-    color += mix(colors[i], vec3(1.0), glow);
+    color += mix(colors[i], vec3(1.0), glow); // Blend particle color with white based on distance
   }
   for (int i = 0; i < int(trailCount); i++) {
     vec2 uv = trail[i];
     float distance = length(st - uv);
-    color += vec3(1.0) / (distance * 100.0);
+    color += vec3(1.0) / (distance * 100.0); // Add a glowing effect for trails
   }
   gl_FragColor = vec4(color, 1.0);
 }
@@ -94,45 +94,47 @@ function setup() {
   // Listen for updates from Firebase
   listenForUpdates();
   listenForParticleUpdates();
+}
 
-  // Setup button to reset view
-  const resetViewBtn = select('#resetViewBtn');
-  resetViewBtn.mousePressed(resetView);
+function updateText() {
+  let inputText = document.getElementById('userInput').value.trim();
+  let selectedFont = document.getElementById('fontSelector').value;
+  let selectedColor = document.getElementById('colorSelector').value;
+  if (inputText !== "") {
+    let newTextObject = {
+      x: random(-200, 200),
+      y: random(-200, 200),
+      z: random(-200, 200),
+      speed: random(1, 5),
+      direction: random([-1, 1]),
+      color: selectedColor,
+      font: selectedFont,
+      text: inputText
+    };
+    objects.push(newTextObject); // Add immediately for display
+    database.ref('userInputs').push(newTextObject); // Push to Firebase for persistence
+    document.getElementById('userInput').value = '';
+  }
 }
 
 function draw() {
   background(0);
   orbitControl();
-  displayObjects();
-  displayParticles();
-}
+  objects.forEach(obj => {
+    push();
+    translate(obj.x, obj.y, obj.z);
+    fill(obj.color);
+    textFont(obj.font);
+    textSize(24);
+    text(obj.text, 0, 0);
+    pop();
+    obj.z += obj.speed * obj.direction;
+    if ((obj.direction === 1 && obj.z > 200) || (obj.direction === -1 && obj.z < -200)) {
+      obj.direction *= -1;
+    }
+  });
 
-function displayObjects() {
-    // Check if the text is going out of the viewable area and adjust
-    objects.forEach(obj => {
-        push();
-        // Translate to the object's position
-        translate(obj.x, obj.y, obj.z);
-        fill(obj.color);
-        textFont(obj.font);
-        textSize(24); // Ensure text size is visible
-
-        // Ensure the text is within the viewable range
-        if (obj.x > width || obj.y > height || obj.z > 500 || obj.x < -width || obj.y < -height || obj.z < -500) {
-            console.log("Text out of view: ", obj.text);
-        } else {
-            text(obj.text, 0, 0);
-        }
-        pop();
-
-        // Simulate object movement or static behavior
-        obj.z += obj.speed * obj.direction;
-        if ((obj.direction === 1 && obj.z > 200) || (obj.direction === -1 && obj.z < -200)) {
-            obj.direction *= -1; // Change direction at boundaries
-        }
-    });
-}
-function displayParticles() {
+  // Display particles
   particles.forEach(p => {
     fill(p.color);
     ellipse(p.pos.x, p.pos.y, 8, 8);
@@ -140,20 +142,13 @@ function displayParticles() {
   });
 }
 
-function mouseDragged() {
-  let newParticle = new Particle(pmouseX - width / 2, pmouseY - height / 2, mouseX - pmouseX, mouseY - pmouseY);
-  particles.push(newParticle);
-  database.ref('particles').push(newParticle.serialize());
-}
-
 function listenForParticleUpdates() {
   const particleRef = firebase.database().ref('particles');
   particleRef.on('child_added', snapshot => {
-    const p = snapshot.val();
-    particles.push(new Particle(p.x, p.y, p.vx, p.vy, p.color));
+    const newParticle = new Particle(snapshot.val().x, snapshot.val().y, snapshot.val().vx, snapshot.val().vy, snapshot.val().color);
+    particles.push(newParticle);
   });
 }
-
 
 function listenForUpdates() {
   const database = firebase.database();
@@ -172,36 +167,4 @@ function listenForUpdates() {
       });
     }
   });
-}
-
-
-function resetView() {
-    let centerX = 0, centerY = 0, centerZ = 0;
-    let textCount = 0; // Variable to count the number of text objects
-
-    // Calculate the average position of text objects only
-    objects.forEach(obj => {
-        if (typeof obj.text !== 'undefined') { // Check if the object is a text object
-            centerX += obj.x;
-            centerY += obj.y;
-            centerZ += obj.z;
-            textCount++;
-        }
-    });
-
-    // If there are text objects, calculate the average position and focus the camera
-    if (textCount > 0) {
-        centerX /= textCount;
-        centerY /= textCount;
-        centerZ /= textCount;
-        camera(centerX, centerY, centerZ + 500, centerX, centerY, centerZ, 0, 1, 0);
-    } else {
-        camera(); // Reset camera to default position
-    }
-
-    // Remove data from Firebase if "xxx" is inputted
-    if (particles.length === 0 && objects.length === 0) {
-        database.ref('particles').remove();
-        database.ref('userInputs').remove();
-    }
 }
