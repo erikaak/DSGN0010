@@ -116,12 +116,6 @@ function updateText() {
   let inputText = document.getElementById('userInput').value.trim();
   let selectedFont = document.getElementById('fontSelector').value;
   let selectedColor = document.getElementById('colorSelector').value;
-  if (inputText === "xxx") {
-    clearScreen(); // Call clearScreen function when inputText is "xxx"
-    document.getElementById('userInput').value = '';
-    redraw(); // Redraw the canvas after clearing
-    return; // Exit the function
-  }
   if (inputText !== "") {
     objects.push({
       x: random(-200, 200),
