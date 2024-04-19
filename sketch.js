@@ -119,7 +119,22 @@ function updateText() {
       redraw();
     }
   };
+
+  // Optional: handle pressing "Enter" to submit text
+  document.getElementById('userInput').onkeypress = function(e) {
+    if (e.key === 'Enter' && inputText !== "") {
+      addTextObject(inputText, selectedFont, selectedColor);
+      // Clear the input field after submitting
+      document.getElementById('userInput').value = '';
+      // Redraw the canvas after adding the text object
+      redraw();
+      // Prevent the default action of pressing "Enter" (form submission)
+      e.preventDefault();
+    }
+  };
 }
+
+
 function addTextObject(text, font, color) {
   objects.push({
     x: random(-200, 200),
