@@ -85,9 +85,10 @@ function setup() {
   noCursor();
   
   setupFirebase(); // Initialize Firebase
-  listenForUpdates();
+  listenForUpdates(); // Listen for real-time updates on Firebase 'particles' node
   listenForParticleUpdates(); // Listen for real-time particle updates
 }
+
 
 function draw() {
   background(0);
@@ -184,10 +185,12 @@ function draw() {
 }
 
 function mouseDragged() {
-  let newParticle = new Particle(pmouseX - width / 2, pmouseY - height / 2, mouseX - pmouseX, mouseY - pmouseY);
+  let newParticle = new Particle(pmouseX - width / 2, pmouseY - height / 2, mouseX - pmouseX, mouseY - pmouseY, random(colorScheme));
   particles.push(newParticle);
-  database.ref('particles').push(newParticle.serialize());
+  const particleRef = firebase.database().ref('particles'); // Corrected database reference
+  particleRef.push(newParticle.serialize()); // Assuming Particle class has a serialize method
 }
+
 
 function mousePressed() {
   // Check if the mouse button pressed is the left mouse button
