@@ -192,3 +192,10 @@ function resetView() {
         camera(0, 0, (height / 2) / tan(PI / 6), 0, 0, 0, 0, 1, 0);
     }
 }
+
+
+function mousePressed() {
+  if (mouseButton == RIGHT) {
+    particles = []; // Clear particles if right-clicked
+  }
+}
