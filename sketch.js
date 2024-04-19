@@ -109,9 +109,9 @@ function updateText() {
   let selectedFont = document.getElementById('fontSelector').value;
   let selectedColor = document.getElementById('colorSelector').value;
   if (inputText === "xxx") {
-    clearScreen();
-    redraw(); // Redraw the canvas after clearing
+    clearScreen(); // Call clearScreen function when inputText is "xxx"
     document.getElementById('userInput').value = '';
+    redraw(); // Redraw the canvas after clearing
     return; // Exit the function
   }
   if (inputText !== "") {
@@ -133,7 +133,6 @@ function clearScreen() {
   particles = []; // Clear particles array
   objects = []; // Clear objects array
 }
-
 
 function draw() {  
   background(0);
