@@ -100,7 +100,9 @@ function updateText() {
   let inputText = document.getElementById('userInput').value.trim();
   let selectedFont = document.getElementById('fontSelector').value;
   let selectedColor = document.getElementById('colorSelector').value;
+  
   if (inputText !== "") {
+    // Create a new text object with random positioning and the selected attributes
     let newTextObject = {
       x: random(-200, 200),
       y: random(-200, 200),
@@ -111,8 +113,14 @@ function updateText() {
       font: selectedFont,
       text: inputText
     };
-    objects.push(newTextObject); // Add immediately for display
-    database.ref('userInputs').push(newTextObject); // Push to Firebase for persistence
+
+    // Add the new text object to the local array for immediate display
+    objects.push(newTextObject);
+
+    // Push the new object to Firebase for storage and synchronization
+    database.ref('userInputs').push(newTextObject);
+
+    // Clear the input field
     document.getElementById('userInput').value = '';
   }
 }
@@ -120,9 +128,32 @@ function updateText() {
 function draw() {
   background(0);
   orbitControl();
-  displayObjects();
-  displayParticles();
+
+  // Display all text objects
+  objects.forEach(obj => {
+    push();
+    translate(obj.x, obj.y, obj.z);
+    fill(obj.color);
+    textFont(obj.font);
+    textSize(24);
+    text(obj.text, 0, 0);
+    pop();
+
+    // Update object position based on its direction and speed
+    obj.z += obj.speed * obj.direction;
+    if ((obj.direction === 1 && obj.z > 200) || (obj.direction === -1 && obj.z < -200)) {
+      obj.direction *= -1;
+    }
+  });
+
+  // Display particles
+  particles.forEach(p => {
+    fill(p.color);
+    ellipse(p.pos.x, p.pos.y, 8, 8);
+    p.move();
+  });
 }
+
 
 function displayObjects() {
   objects.forEach(obj => {
