@@ -110,6 +110,7 @@ function updateText() {
   let selectedColor = document.getElementById('colorSelector').value;
   if (inputText === "xxx") {
     clearScreen();
+    redraw(); // Redraw the canvas after clearing
     document.getElementById('userInput').value = '';
     return; // Exit the function
   }
@@ -127,6 +128,7 @@ function updateText() {
       document.getElementById('userInput').value = '';
   }
 }
+
 
 function clearScreen() {
   particles = []; // Clear particles array
