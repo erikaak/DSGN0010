@@ -127,48 +127,48 @@ function updateText() {
 }
 
 function draw() {
-    background(0);
-    orbitControl();
-
-    // Display all objects
-    objects.forEach(obj => {
-        push();
-        translate(obj.x, obj.y, obj.z);
-        fill(obj.color);
-        textFont(obj.font);
-        textSize(24);
-        text(obj.text, 0, 0);
-        // Draw a cube associated with each text
-        translate(0, 0, 25); // Move the cube slightly behind the text
-        box(50); // Draw a cube of 50x50x50 units
-        pop();
-
-        // Update object position based on its direction and speed
-        obj.z += obj.speed * obj.direction;
-        if ((obj.direction === 1 && obj.z > 200) || (obj.direction === -1 && obj.z < -200)) {
-            obj.direction *= -1; // Change direction when reaching bounds
-        }
-    });
-}
-
-
-function displayObjects() {
+  background(0);
+  orbitControl();
   objects.forEach(obj => {
-    push();
-    translate(obj.x, obj.y, obj.z);
-    fill(obj.color);
-    textFont(obj.font);
-    textSize(24);
-    text(obj.text, 0, 0);
-    pop();
+      push();
+      translate(obj.x, obj.y, obj.z);
+      fill(obj.color);
+      textFont(obj.font);
+      textSize(24); // Adjust text size if necessary
+      text(obj.text, 0, 0); // Draw text at object's location
+      pop();
 
-    // Update object movement
-    obj.z += obj.speed * obj.direction;
-    if ((obj.direction === 1 && obj.z > 200) || (obj.direction === -1 && obj.z < -200)) {
-      obj.direction *= -1;
-    }
+      // Update position and direction
+      obj.z += obj.speed * obj.direction;
+      if ((obj.direction === 1 && obj.z > 200) || (obj.direction === -1 && obj.z < -200)) {
+          obj.direction *= -1; // Change direction upon reaching a certain point
+      }
+
+  });
+
+  graphics.clear();
+  objects.forEach(obj => {
+      graphics.fill(obj.color);
+      graphics.textFont(obj.font);
+      graphics.text(obj.text, obj.x + width / 2, obj.y + height / 2, obj.z);
+  
+      push();
+      translate(obj.x, obj.y, obj.z);
+      fill(obj.color);
+      box(20); // Drawing a simple box
+      pop();
+    });
+  image(graphics, -width / 2, -height / 2);
+
+  // Display particles
+  particles.forEach(p => {
+      fill(p.color);
+      ellipse(p.pos.x, p.pos.y, 8, 8);
+      p.move();
   });
 }
+
+
 
 function displayParticles() {
   particles.forEach(p => {
