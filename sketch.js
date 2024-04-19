@@ -271,20 +271,10 @@ function listenForParticleUpdates() {
 }
 
 function listenForUpdates() {
-  const database = firebase.database();
-  database.ref('userInputs').on('child_added', function(snapshot) {
-    const data = snapshot.val();
-    if (data) {
-      objects.push({
-        x: random(-200, 200),
-        y: random(-200, 200),
-        z: random(-200, 200),
-        speed: random(1, 5),
-        direction: random([-1, 1]),
-        color: data.color,
-        font: data.font,
-        text: data.text
-      });
-    }
+  const particleRef = firebase.database().ref('particles');
+  particleRef.on('child_added', snapshot => {
+    const p = snapshot.val();
+    particles.push(new Particle(p.x, p.y, p.vx, p.vy, p.color));
   });
 }
+
