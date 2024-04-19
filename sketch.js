@@ -134,6 +134,7 @@ function clearScreen() {
   objects = []; // Clear objects array
 }
 
+
 function draw() {  
   background(0);
   orbitControl();
