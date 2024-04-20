@@ -110,6 +110,7 @@ function updateText() {
   // Check if the input text is "clear database"
   if (inputText.toLowerCase() === "clear database") {
     clearDatabase();
+    document.getElementById('userInput').value = ''; // Clear input field
     return; // Exit the function to prevent adding "clear database" as a regular text object
   }
   
