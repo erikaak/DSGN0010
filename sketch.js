@@ -132,8 +132,8 @@ function updateText() {
 
 function clearDatabase() {
   // Clear the Firebase database
-  database.ref('particles').remove();
-  database.ref('userInput').remove();
+  database.ref('particles').set(null)
+  database.ref('userInput').set(null)
 }
 
 
