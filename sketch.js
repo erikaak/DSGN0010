@@ -162,11 +162,6 @@ function displayParticles() {
   });
 }
 
-function mouseDragged() {
-  let newParticle = new Particle(pmouseX - width / 2, pmouseY - height / 2, mouseX - pmouseX, mouseY - pmouseY);
-  particles.push(newParticle);
-  database.ref('particles').push(newParticle.serialize());
-}
 
 function listenForParticleUpdates() {
   const particleRef = firebase.database().ref('particles');
@@ -226,5 +221,33 @@ function resetView() {
         database.ref('particles').remove();
         database.ref('userInput').remove();
     }
+}
+
+
+function mouseDragged() {
+  particles.push(new Particle(pmouseX - width / 2, pmouseY - height / 2, mouseX - pmouseX, mouseY - pmouseY));
+}
+
+function mousePressed() {
+  // Check if the mouse button pressed is the left mouse button
+  if (mouseButton === LEFT) {
+    // Randomly choose between changing color and exploding
+    let randomAction = random();
+    if (randomAction < 0.5) {
+      // Change color
+      let particleIndex = int(random(particles.length)); // Choose a random particle
+      particles[particleIndex].color = random(colorScheme); // Change its color to a random color
+    } else {
+      // Explode
+      let particleIndex = int(random(particles.length)); // Choose a random particle
+      particles[particleIndex].explode(); // Make it explode
+      particles.splice(particleIndex, 1); // Remove the original particle
+    }
+  }
+  
+  // Clear particles if right-clicked
+  if (mouseButton === RIGHT) {
+    particles = [];
+  }
 }
 
