@@ -65,20 +65,20 @@ class Particle {
   }
 
   explode() {
-    let numParticles = int(random(5, 15));
-    for (let i = 0; i < numParticles; i++) {
-      let angle = random(TWO_PI);
-      let speed = random(1, 3);
-      let vx = speed * cos(angle);
-      let vy = speed * sin(angle);
-      let newParticle = new Particle(this.pos.x, this.pos.y, vx, vy, this.color);
-      particles.push(newParticle);
-      // Send new particle data to Firebase
-      database.ref('particles').push(newParticle.serialize());
-    }
+  let numParticles = int(random(5, 15));
+  let newParticles = []; // Collect new particles
+  for (let i = 0; i < numParticles; i++) {
+    let angle = random(TWO_PI);
+    let speed = random(1, 3);
+    let vx = speed * cos(angle);
+    let vy = speed * sin(angle);
+    let newParticle = new Particle(this.pos.x, this.pos.y, vx, vy, this.color);
+    newParticles.push(newParticle.serialize()); // Serialize new particles
   }
+  // Send new particles data to Firebase
+  database.ref('particles').push(newParticles);
 }
-
+  
 let particles = [];
 let graphics; // 2D graphics buffer for text
 let objects = []; // Array to hold 3D objects
@@ -188,15 +188,17 @@ function draw() {
 }
 
 
-
 function listenForParticleUpdates() {
   const particleRef = firebase.database().ref('particles');
   particleRef.on('child_added', snapshot => {
-    const p = snapshot.val();
-    particles.push(new Particle(p.x, p.y, p.vx, p.vy, p.color));
+    const newParticles = snapshot.val();
+    if (newParticles) {
+      newParticles.forEach(p => {
+        particles.push(new Particle(p.x, p.y, p.vx, p.vy, p.color));
+      });
+    }
   });
 }
-
 
 function listenForUpdates() {
   const database = firebase.database();
