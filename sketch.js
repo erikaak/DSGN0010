@@ -128,13 +128,13 @@ function draw() {
     ellipse(p.pos.x, p.pos.y, 8, 8);
     p.move();
   });
+
+  // Call resetView() function to adjust the camera position
+  resetView();
   
   // Render the 2D graphics buffer containing the text
   image(graphics, -width / 2, -height / 2);
 }
-
-document.getElementById('submitBtn').addEventListener('click', updateText);
-
 
 function updateText() {
   let inputText = document.getElementById('userInput').value.trim();
@@ -165,8 +165,6 @@ function updateText() {
     document.getElementById('userInput').value = '';
   }
 }
-
-
 
 // Convert 3D world position to 2D screen position
 function worldToScreen(x, y, z) {
@@ -218,6 +216,7 @@ function mouseDragged() {
   particles.push(newParticle);
   database.ref('particles').push(newParticle.serialize());
 }
+
 
 
 function listenForParticleUpdates() {
