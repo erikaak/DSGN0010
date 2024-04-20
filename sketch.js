@@ -129,6 +129,10 @@ function draw() {
     p.move();
   });
 
+  // Call resetView() function to adjust the camera position
+  resetView();
+  
+  // Render the 2D graphics buffer containing the text
   image(graphics, -width / 2, -height / 2);
 }
 
