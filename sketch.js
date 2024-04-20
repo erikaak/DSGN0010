@@ -129,42 +129,32 @@ function updateText() {
 function draw() {
   background(0);
   orbitControl();
+
+  // Display 3D objects (boxes/cubes)
   objects.forEach(obj => {
-      push();
-      translate(obj.x, obj.y, obj.z);
-      fill(obj.color);
-      textFont(obj.font);
-      textSize(24); // Adjust text size if necessary
-      text(obj.text, 0, 0); // Draw text at object's location
-      pop();
-
-      // Update position and direction
-      obj.z += obj.speed * obj.direction;
-      if ((obj.direction === 1 && obj.z > 200) || (obj.direction === -1 && obj.z < -200)) {
-          obj.direction *= -1; // Change direction upon reaching a certain point
-      }
-
+    push();
+    translate(obj.x, obj.y, obj.z);
+    fill(obj.color);
+    box(20); // Drawing a simple box
+    pop();
   });
 
-  graphics.clear();
+  // Display text
   objects.forEach(obj => {
-      graphics.fill(obj.color);
-      graphics.textFont(obj.font);
-      graphics.text(obj.text, obj.x + width / 2, obj.y + height / 2, obj.z);
-  
-      push();
-      translate(obj.x, obj.y, obj.z);
-      fill(obj.color);
-      box(20); // Drawing a simple box
-      pop();
-    });
-  image(graphics, -width / 2, -height / 2);
+    push();
+    translate(obj.x, obj.y, obj.z);
+    fill(obj.color);
+    textFont(obj.font);
+    textSize(24);
+    text(obj.text, 0, 0); // Draw text at object's location
+    pop();
+  });
 
   // Display particles
   particles.forEach(p => {
-      fill(p.color);
-      ellipse(p.pos.x, p.pos.y, 8, 8);
-      p.move();
+    fill(p.color);
+    ellipse(p.pos.x, p.pos.y, 8, 8);
+    p.move();
   });
 }
 
