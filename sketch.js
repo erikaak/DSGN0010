@@ -112,7 +112,7 @@ function draw() {
   }
 }
 function updateText() {
-  let inputText = document.getElementById('userInputs').value.trim();
+  let inputText = document.getElementById('userInput').value.trim();
   let selectedFont = document.getElementById('fontSelector').value;
   let selectedColor = document.getElementById('colorSelector').value;
   if (inputText !== "") {
@@ -126,7 +126,7 @@ function updateText() {
           font: selectedFont,
           text: inputText
       });
-      document.getElementById('userInputs').value = '';
+      document.getElementById('userInput').value = '';
   }
 }
 
@@ -179,7 +179,7 @@ function listenForParticleUpdates() {
 
 function listenForUpdates() {
   const database = firebase.database();
-  database.ref('userInputs').on('child_added', function(snapshot) {
+  database.ref('userInput').on('child_added', function(snapshot) {
     const data = snapshot.val();
     if (data) {
       objects.push({
@@ -224,7 +224,7 @@ function resetView() {
     // Remove data from Firebase if "xxx" is inputted
     if (particles.length === 0 && objects.length === 0) {
         database.ref('particles').remove();
-        database.ref('userInputs').remove();
+        database.ref('userInput').remove();
     }
 }
 
