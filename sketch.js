@@ -1,4 +1,4 @@
-// WebGL shader code for visual effects
+ // WebGL shader code for visual effects
 let vertShader = `
 precision mediump float;
 attribute vec3 aPosition;
@@ -106,6 +106,14 @@ function updateText() {
   let inputText = document.getElementById('userInput').value.trim();
   let selectedFont = document.getElementById('fontSelector').value;
   let selectedColor = document.getElementById('colorSelector').value;
+  
+  // Check if the input text is "clear database"
+  if (inputText.toLowerCase() === "clear database") {
+    clearDatabase();
+    document.getElementById('userInput').value = ''; // Clear input field
+    return; // Exit the function to prevent adding "clear database" as a regular text object
+  }
+  
   if (inputText !== "") {
     // Random positions for the new object
     objects.push({
@@ -121,6 +129,12 @@ function updateText() {
 
     document.getElementById('userInput').value = '';
   }
+}
+
+function clearDatabase() {
+  // Clear the Firebase database
+  database.ref('particles').set(null)
+  database.ref('userInput').set(null)
 }
 
 
