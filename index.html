@@ -87,6 +87,12 @@
         });
 
         function saveToFirebase(text, font, color) {
+             database.ref('userInput').once('value', function(snapshot) {
+                if (!snapshot.exists()) {
+                    // 'userInput' node doesn't exist, create it
+                    database.ref('userInput').set({});
+                }
+        
             // Push user input data to Firebase database
             database.ref('userInput').push({
                 text: text,
