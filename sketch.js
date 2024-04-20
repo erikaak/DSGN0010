@@ -191,7 +191,7 @@ function draw() {
 
 function listenForUpdates() {
   const database = firebase.database();
-  database.ref('particles').on('child_added', function(snapshot) {
+  database.ref('userInputs').on('child_added', function(snapshot) {
     const data = snapshot.val();
     if (data) {
       objects.push({
