@@ -132,23 +132,27 @@ function draw() {
   // Update and draw objects and text
   objects.forEach(obj => {
     push();
+    // Update position based on velocity
+    obj.x += obj.speed * obj.direction;
+    // Reset position if it goes beyond certain bounds
+    if ((obj.direction === 1 && obj.x > 200) || (obj.direction === -1 && obj.x < -200)) {
+      obj.direction *= -1;
+    }
     translate(obj.x, obj.y, obj.z);
     fill(obj.color);
     textFont(obj.font);
     textSize(24); // Adjust text size if necessary
     text(obj.text, 0, 0); // Draw text at object's location
     pop();
-
-    // Update position and direction
-    obj.z += obj.speed * obj.direction;
-    if ((obj.direction === 1 && obj.z > 200) || (obj.direction === -1 && obj.z < -200)) {
-      obj.direction *= -1; // Change direction upon reaching a certain point
-    }
   });
 
   // Draw 3D objects
   graphics.clear();
   objects.forEach(obj => {
+    obj.z += obj.speed * obj.direction;
+    if ((obj.direction === 1 && obj.z > 200) || (obj.direction === -1 && obj.z < -200)) {
+      obj.direction *= -1; // Change direction upon reaching a certain point
+    }
     graphics.fill(obj.color);
     graphics.textFont(obj.font);
     graphics.text(obj.text, obj.x + width / 2, obj.y + height / 2, obj.z);
