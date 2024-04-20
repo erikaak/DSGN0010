@@ -87,14 +87,19 @@
         });
 
         function saveToFirebase(text, font, color) {
-            // Push user input data to Firebase database
+    // Push user input data to Firebase database
             database.ref('userInput').push({
                 text: text,
                 font: font,
                 color: color,
                 timestamp: firebase.database.ServerValue.TIMESTAMP
+            }).then(() => {
+                console.log('Data saved successfully');
+            }).catch(error => {
+                console.error('Error saving data:', error);
             });
-        }
+}
+
 
         
         
