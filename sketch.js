@@ -79,8 +79,6 @@ class Particle {
   }
 }
 
-
-
 let particles = [];
 let graphics; // 2D graphics buffer for text
 let objects = []; // Array to hold 3D objects
@@ -102,86 +100,39 @@ function setup() {
   resetViewBtn.mousePressed(resetView);
 }
 
-
-
-function updateText() {
-  let inputText = document.getElementById('userInput').value.trim();
-  let selectedFont = document.getElementById('fontSelector').value;
-  let selectedColor = document.getElementById('colorSelector').value;
-  
-  // Check if the input text is "clear database"
-  if (inputText.toLowerCase() === "clear database") {
-    clearDatabase();
-    document.getElementById('userInput').value = ''; // Clear input field
-    return; // Exit the function to prevent adding "clear database" as a regular text object
-  }
-  
-  if (inputText !== "") {
-    // Random positions for the new object
-    objects.push({
-      x: random(-200, 200),
-      y: random(-200, 200),
-      z: random(-200, 200),
-      speed: random(1, 5),
-      direction: random([-1, 1]),
-      color: selectedColor,
-      font: selectedFont,
-      text: inputText
-    });
-
-    document.getElementById('userInput').value = '';
-  }
-}
-
-function clearDatabase() {
-  // Clear the Firebase database
-  database.ref('particles').set(null)
-  database.ref('userInput').set(null)
-}
-
-
-
 function draw() {
   background(0);
   orbitControl();
-  
-  // Update and draw objects and text
-  objects.forEach(obj => {
-    push();
-    // Update position based on velocity
-    obj.x += obj.speed * obj.direction;
-    // Reset position if it goes beyond certain bounds
-    if ((obj.direction === 1 && obj.x > 200) || (obj.direction === -1 && obj.x < -200)) {
-      obj.direction *= -1;
-    }
-    translate(obj.x, obj.y, obj.z);
-    fill(obj.color);
-    textFont(obj.font);
-    textSize(24); // Adjust text size if necessary
-    text(obj.text, 0, 0); // Draw text at object's location
-    pop();
-  });
+  displayObjects();
+  displayParticles();
+}
 
-  // Draw 3D objects
-  graphics.clear();
-  objects.forEach(obj => {
-    obj.z += obj.speed * obj.direction;
-    if ((obj.direction === 1 && obj.z > 200) || (obj.direction === -1 && obj.z < -200)) {
-      obj.direction *= -1; // Change direction upon reaching a certain point
-    }
-    graphics.fill(obj.color);
-    graphics.textFont(obj.font);
-    graphics.text(obj.text, obj.x + width / 2, obj.y + height / 2, obj.z);
-  
-    push();
-    translate(obj.x, obj.y, obj.z);
-    fill(obj.color);
-    box(20); // Drawing a simple box
-    pop();
-  });
-  image(graphics, -width / 2, -height / 2);
+function displayObjects() {
+    // Check if the text is going out of the viewable area and adjust
+    objects.forEach(obj => {
+        push();
+        // Translate to the object's position
+        translate(obj.x, obj.y, obj.z);
+        fill(obj.color);
+        textFont(obj.font);
+        textSize(24); // Ensure text size is visible
 
-  // Display particles
+        // Ensure the text is within the viewable range
+        if (obj.x > width || obj.y > height || obj.z > 500 || obj.x < -width || obj.y < -height || obj.z < -500) {
+            console.log("Text out of view: ", obj.text);
+        } else {
+            text(obj.text, 0, 0);
+        }
+        pop();
+
+        // Simulate object movement or static behavior
+        obj.z += obj.speed * obj.direction;
+        if ((obj.direction === 1 && obj.z > 200) || (obj.direction === -1 && obj.z < -200)) {
+            obj.direction *= -1; // Change direction at boundaries
+        }
+    });
+}
+function displayParticles() {
   particles.forEach(p => {
     fill(p.color);
     ellipse(p.pos.x, p.pos.y, 8, 8);
@@ -189,7 +140,11 @@ function draw() {
   });
 }
 
-
+function mouseDragged() {
+  let newParticle = new Particle(pmouseX - width / 2, pmouseY - height / 2, mouseX - pmouseX, mouseY - pmouseY);
+  particles.push(newParticle);
+  database.ref('particles').push(newParticle.serialize());
+}
 
 function listenForParticleUpdates() {
   const particleRef = firebase.database().ref('particles');
@@ -202,7 +157,7 @@ function listenForParticleUpdates() {
 
 function listenForUpdates() {
   const database = firebase.database();
-  database.ref('userInput').on('child_added', function(snapshot) {
+  database.ref('userInputs').on('child_added', function(snapshot) {
     const data = snapshot.val();
     if (data) {
       objects.push({
@@ -247,34 +202,6 @@ function resetView() {
     // Remove data from Firebase if "xxx" is inputted
     if (particles.length === 0 && objects.length === 0) {
         database.ref('particles').remove();
-        database.ref('userInput').remove();
+        database.ref('userInputs').remove();
     }
-}
-
-
-function mouseDragged() {
-  particles.push(new Particle(pmouseX - width / 2, pmouseY - height / 2, mouseX - pmouseX, mouseY - pmouseY));
-}
-
-function mousePressed() {
-  // Check if the mouse button pressed is the left mouse button
-  if (mouseButton === LEFT) {
-    // Randomly choose between changing color and exploding
-    let randomAction = random();
-    if (randomAction < 0.5) {
-      // Change color
-      let particleIndex = int(random(particles.length)); // Choose a random particle
-      particles[particleIndex].color = random(colorScheme); // Change its color to a random color
-    } else {
-      // Explode
-      let particleIndex = int(random(particles.length)); // Choose a random particle
-      particles[particleIndex].explode(); // Make it explode
-      particles.splice(particleIndex, 1); // Remove the original particle
-    }
-  }
-  
-  // Clear particles if right-clicked
-  if (mouseButton === RIGHT) {
-    particles = [];
-  }
 }
