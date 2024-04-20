@@ -129,7 +129,7 @@ function draw() {
   background(0);
   orbitControl();
   
-  // Draw objects and text
+  // Update and draw objects and text
   objects.forEach(obj => {
     push();
     translate(obj.x, obj.y, obj.z);
@@ -168,6 +168,7 @@ function draw() {
     p.move();
   });
 }
+
 
 
 function listenForParticleUpdates() {
