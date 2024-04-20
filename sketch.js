@@ -111,47 +111,51 @@ function draw() {
     database.ref('particles').remove(); // Clear particles data in Firebase
   }
 }
+
 function updateText() {
   let inputText = document.getElementById('userInput').value.trim();
   let selectedFont = document.getElementById('fontSelector').value;
   let selectedColor = document.getElementById('colorSelector').value;
   if (inputText !== "") {
-      objects.push({
-          x: random(-200, 200),
-          y: random(-200, 200),
-          z: random(-200, 200),
-          speed: random(1, 5),
-          direction: random([-1, 1]),
-          color: selectedColor,
-          font: selectedFont,
-          text: inputText
-      });
-      document.getElementById('userInput').value = '';
+    // Random positions for the new object
+    objects.push({
+      x: random(-200, 200),
+      y: random(-200, 200),
+      z: random(-200, 200),
+      speed: random(1, 5),
+      direction: random([-1, 1]),
+      color: selectedColor,
+      font: selectedFont,
+      text: inputText
+    });
+
+    // Call displayObjects to draw the new object
+    displayObjects();
+
+    document.getElementById('userInput').value = '';
   }
 }
 
+
 function displayObjects() {
-    // Check if the text is going out of the viewable area and adjust
-    objects.forEach(obj => {
-        push();
-        // Translate to the object's position
-        translate(obj.x, obj.y, obj.z);
-        fill(obj.color);
-        textFont(obj.font);
-        textSize(24); // Ensure text size is visible
+  // Clear the 2D graphics buffer to make it transparent except for the text
+  graphics.clear();
 
-        // Ensure the text is within the viewable range
-        if (abs(obj.x) < width / 2 && abs(obj.y) < height / 2 && abs(obj.z) < 250) {
-            text(obj.text, 0, 0);
-        }
-        pop();
+  // Draw objects in 3D canvas and text in the 2D graphics buffer
+  objects.forEach(obj => {
+    push();
+    translate(obj.x, obj.y, obj.z);
+    fill(obj.color);
+    box(20); // Drawing a simple box
+    pop();
 
-        // Simulate object movement or static behavior
-        obj.z += obj.speed * obj.direction;
-        if ((obj.direction === 1 && obj.z > 200) || (obj.direction === -1 && obj.z < -200)) {
-            obj.direction *= -1; // Change direction at boundaries
-        }
-    });
+    // Adjust text positioning if necessary
+    graphics.fill(255); // White text for visibility
+    graphics.text(obj.text, obj.x + width / 2, obj.y + height / 2); // Adjust for centering
+  });
+
+  // Render the 2D graphics buffer atop the 3D canvas
+  image(graphics, -width / 2, -height / 2);
 }
 
 function displayParticles() {
