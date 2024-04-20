@@ -100,17 +100,7 @@ function setup() {
   resetViewBtn.mousePressed(resetView);
 }
 
-function draw() {
-  background(0);
-  orbitControl();
-  displayObjects();
-  displayParticles();
 
-  if (mouseIsPressed && mouseButton === RIGHT) {
-    particles = []; // Clear the particles array
-    database.ref('particles').remove(); // Clear particles data in Firebase
-  }
-}
 
 function updateText() {
   let inputText = document.getElementById('userInput').value.trim();
@@ -129,36 +119,49 @@ function updateText() {
       text: inputText
     });
 
-    // Call displayObjects to draw the new object
-    displayObjects();
-
     document.getElementById('userInput').value = '';
   }
 }
 
 
-function displayObjects() {
-  // Clear the 2D graphics buffer to make it transparent except for the text
-  graphics.clear();
 
-  // Draw objects in 3D canvas and text in the 2D graphics buffer
+function draw() {
+  background(0);
+  orbitControl();
+  
+  // Draw objects and text
   objects.forEach(obj => {
+    push();
+    translate(obj.x, obj.y, obj.z);
+    fill(obj.color);
+    textFont(obj.font);
+    textSize(24); // Adjust text size if necessary
+    text(obj.text, 0, 0); // Draw text at object's location
+    pop();
+
+    // Update position and direction
+    obj.z += obj.speed * obj.direction;
+    if ((obj.direction === 1 && obj.z > 200) || (obj.direction === -1 && obj.z < -200)) {
+      obj.direction *= -1; // Change direction upon reaching a certain point
+    }
+  });
+
+  // Draw 3D objects
+  graphics.clear();
+  objects.forEach(obj => {
+    graphics.fill(obj.color);
+    graphics.textFont(obj.font);
+    graphics.text(obj.text, obj.x + width / 2, obj.y + height / 2, obj.z);
+  
     push();
     translate(obj.x, obj.y, obj.z);
     fill(obj.color);
     box(20); // Drawing a simple box
     pop();
-
-    // Adjust text positioning if necessary
-    graphics.fill(255); // White text for visibility
-    graphics.text(obj.text, obj.x + width / 2, obj.y + height / 2); // Adjust for centering
   });
-
-  // Render the 2D graphics buffer atop the 3D canvas
   image(graphics, -width / 2, -height / 2);
-}
 
-function displayParticles() {
+  // Display particles
   particles.forEach(p => {
     fill(p.color);
     ellipse(p.pos.x, p.pos.y, 8, 8);
