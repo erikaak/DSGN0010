@@ -107,6 +107,25 @@ function draw() {
   displayParticles();
 }
 
+function updateText() {
+  let inputText = document.getElementById('userInput').value.trim();
+  let selectedFont = document.getElementById('fontSelector').value;
+  let selectedColor = document.getElementById('colorSelector').value;
+  if (inputText !== "") {
+      objects.push({
+          x: random(-200, 200),
+          y: random(-200, 200),
+          z: random(-200, 200),
+          speed: random(1, 5),
+          direction: random([-1, 1]),
+          color: selectedColor,
+          font: selectedFont,
+          text: inputText
+      });
+      document.getElementById('userInput').value = '';
+  }
+}
+
 function displayObjects() {
     // Check if the text is going out of the viewable area and adjust
     objects.forEach(obj => {
