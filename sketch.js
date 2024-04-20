@@ -101,33 +101,10 @@ function draw() {
   background(0);
   orbitControl();
 
-  // Display all text objects
-  objects.forEach(obj => {
-    push();
-    translate(obj.x, obj.y, obj.z);
-    fill(obj.color);
-    textFont(obj.font);
-    textSize(24);
-    text(obj.text, 0, 0);
-    pop();
-
-    // Update object position based on its direction and speed
-    obj.x += obj.vx;
-    obj.y += obj.vy;
-    obj.z += obj.vz;
-
-    // Wrap or bounce at boundaries
-    obj.x = (obj.x > 200 || obj.x < -200) ? -obj.x : obj.x;
-    obj.y = (obj.y > 200 || obj.y < -200) ? -obj.y : obj.y;
-    obj.z = (obj.z > 200 || obj.z < -200) ? -obj.z : obj.z;
-  });
+  displayObjects(); // Call function to display text objects
 
   // Display particles
-  particles.forEach(p => {
-    fill(p.color);
-    ellipse(p.pos.x, p.pos.y, 8, 8);
-    p.move();
-  });
+  displayParticles();
 
   // Call resetView() function to adjust the camera position
   resetView();
@@ -135,6 +112,7 @@ function draw() {
   // Render the 2D graphics buffer containing the text
   image(graphics, -width / 2, -height / 2);
 }
+
 
 function updateText() {
   let inputText = document.getElementById('userInput').value.trim();
@@ -184,10 +162,14 @@ function displayObjects() {
     pop();
 
     // Update object movement
-    obj.z += obj.speed * obj.direction;
-    if ((obj.direction === 1 && obj.z > 200) || (obj.direction === -1 && obj.z < -200)) {
-      obj.direction *= -1;
-    }
+    obj.x += obj.vx;
+    obj.y += obj.vy;
+    obj.z += obj.vz;
+
+    // Wrap or bounce at boundaries
+    obj.x = (obj.x > 200 || obj.x < -200) ? -obj.x : obj.x;
+    obj.y = (obj.y > 200 || obj.y < -200) ? -obj.y : obj.y;
+    obj.z = (obj.z > 200 || obj.z < -200) ? -obj.z : obj.z;
   });
 }
 
