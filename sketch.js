@@ -97,6 +97,41 @@ function setup() {
 }
 
 
+function draw() {
+  background(0);
+  orbitControl();
+
+  // Display all text objects
+  objects.forEach(obj => {
+    push();
+    translate(obj.x, obj.y, obj.z);
+    fill(obj.color);
+    textFont(obj.font);
+    textSize(24);
+    text(obj.text, 0, 0);
+    pop();
+
+    // Update object position based on its direction and speed
+    obj.x += obj.vx;
+    obj.y += obj.vy;
+    obj.z += obj.vz;
+
+    // Wrap or bounce at boundaries
+    obj.x = (obj.x > 200 || obj.x < -200) ? -obj.x : obj.x;
+    obj.y = (obj.y > 200 || obj.y < -200) ? -obj.y : obj.y;
+    obj.z = (obj.z > 200 || obj.z < -200) ? -obj.z : obj.z;
+  });
+
+  // Display particles
+  particles.forEach(p => {
+    fill(p.color);
+    ellipse(p.pos.x, p.pos.y, 8, 8);
+    p.move();
+  });
+
+  image(graphics, -width / 2, -height / 2);
+}
+
 function updateText() {
   let inputText = document.getElementById('userInput').value.trim();
   let selectedFont = document.getElementById('fontSelector').value;
@@ -108,8 +143,9 @@ function updateText() {
       x: random(-200, 200),
       y: random(-200, 200),
       z: random(-200, 200),
-      speed: random(1, 5),
-      direction: random([-1, 1]),
+      vx: random(-2, 2), // Velocity in X direction
+      vy: random(-2, 2), // Velocity in Y direction
+      vz: random(-2, 2), // Velocity in Z direction
       color: selectedColor,
       font: selectedFont,
       text: inputText
@@ -126,35 +162,12 @@ function updateText() {
   }
 }
 
-function draw() {
-  background(0);
-  orbitControl();
-
-  // Display all text objects
-  objects.forEach(obj => {
-    push();
-    translate(obj.x, obj.y, obj.z);
-    fill(obj.color);
-    textFont(obj.font);
-    textSize(24);
-    text(obj.text, 0, 0);
-    pop();
-
-    // Update object position based on its direction and speed
-    obj.z += obj.speed * obj.direction;
-    if ((obj.direction === 1 && obj.z > 200) || (obj.direction === -1 && obj.z < -200)) {
-      obj.direction *= -1;
-    }
-  });
-
-  // Display particles
-  particles.forEach(p => {
-    fill(p.color);
-    ellipse(p.pos.x, p.pos.y, 8, 8);
-    p.move();
-  });
+// Convert 3D world position to 2D screen position
+function worldToScreen(x, y, z) {
+  let sx = screenX(x, y, z);
+  let sy = screenY(x, y, z);
+  return {x: sx, y: sy};
 }
-
 
 function displayObjects() {
   objects.forEach(obj => {
