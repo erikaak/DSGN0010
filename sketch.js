@@ -1,4 +1,4 @@
- // WebGL shader code for visual effects
+// WebGL shader code for visual effects
 let vertShader = `
 precision mediump float;
 attribute vec3 aPosition;
