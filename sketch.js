@@ -224,3 +224,11 @@ function resetView() {
         database.ref('userInputs').remove();
     }
 }
+
+function mousePressed() {
+  if (mouseButton === RIGHT) {
+    particles = []; // Clear the particles array
+    database.ref('particles').remove(); // Clear particles data in Firebase
+  }
+}
+
