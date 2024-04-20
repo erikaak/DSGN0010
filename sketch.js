@@ -141,9 +141,7 @@ function displayObjects() {
         textSize(24); // Ensure text size is visible
 
         // Ensure the text is within the viewable range
-        if (obj.x > width || obj.y > height || obj.z > 500 || obj.x < -width || obj.y < -height || obj.z < -500) {
-            console.log("Text out of view: ", obj.text);
-        } else {
+        if (abs(obj.x) < width / 2 && abs(obj.y) < height / 2 && abs(obj.z) < 250) {
             text(obj.text, 0, 0);
         }
         pop();
@@ -155,6 +153,7 @@ function displayObjects() {
         }
     });
 }
+
 function displayParticles() {
   particles.forEach(p => {
     fill(p.color);
