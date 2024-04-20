@@ -141,7 +141,9 @@ function updateText() {
   let selectedFont = document.getElementById('fontSelector').value;
   let selectedColor = document.getElementById('colorSelector').value;
   
-  if (inputText !== "") {
+  if (inputText.toLowerCase() === "clear database") {
+    clearDatabase(); // Call the clearDatabase function
+  } else if (inputText !== "") {
     // Create a new text object with random positioning and the selected attributes
     let newTextObject = {
       x: random(-200, 200),
@@ -165,6 +167,7 @@ function updateText() {
     document.getElementById('userInput').value = '';
   }
 }
+
 
 // Convert 3D world position to 2D screen position
 function worldToScreen(x, y, z) {
@@ -268,4 +271,13 @@ function resetView() {
         // Reset to default view if there are no text objects
         camera(0, 0, (height / 2) / tan(PI / 6), 0, 0, 0, 0, 1, 0);
     }
+}
+function clearDatabase() {
+  // Remove all data from Firebase
+  database.ref('particles').remove();
+  database.ref('userInputs').remove();
+  // Clear local arrays
+  particles = [];
+  objects = [];
+  console.log("Database cleared"); // Optional: Console log for debugging
 }
