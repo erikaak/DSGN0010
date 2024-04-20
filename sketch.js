@@ -106,6 +106,13 @@ function updateText() {
   let inputText = document.getElementById('userInput').value.trim();
   let selectedFont = document.getElementById('fontSelector').value;
   let selectedColor = document.getElementById('colorSelector').value;
+  
+  // Check if the input text is "clear database"
+  if (inputText.toLowerCase() === "clear database") {
+    clearDatabase();
+    return; // Exit the function to prevent adding "clear database" as a regular text object
+  }
+  
   if (inputText !== "") {
     // Random positions for the new object
     objects.push({
@@ -121,6 +128,12 @@ function updateText() {
 
     document.getElementById('userInput').value = '';
   }
+}
+
+function clearDatabase() {
+  // Clear the Firebase database
+  database.ref('particles').remove();
+  database.ref('userInput').remove();
 }
 
 
