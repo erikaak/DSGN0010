@@ -112,7 +112,7 @@ function draw() {
   }
 }
 function updateText() {
-  let inputText = document.getElementById('userInput').value.trim();
+  let inputText = document.getElementById('userInputs').value.trim();
   let selectedFont = document.getElementById('fontSelector').value;
   let selectedColor = document.getElementById('colorSelector').value;
   if (inputText !== "") {
@@ -126,7 +126,7 @@ function updateText() {
           font: selectedFont,
           text: inputText
       });
-      document.getElementById('userInput').value = '';
+      document.getElementById('userInputs').value = '';
   }
 }
 
