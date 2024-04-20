@@ -105,8 +105,12 @@ function draw() {
   orbitControl();
   displayObjects();
   displayParticles();
-}
 
+  if (mouseIsPressed && mouseButton === RIGHT) {
+    particles = []; // Clear the particles array
+    database.ref('particles').remove(); // Clear particles data in Firebase
+  }
+}
 function updateText() {
   let inputText = document.getElementById('userInput').value.trim();
   let selectedFont = document.getElementById('fontSelector').value;
@@ -223,12 +227,5 @@ function resetView() {
         database.ref('particles').remove();
         database.ref('userInputs').remove();
     }
-}
-
-function mousePressed() {
-  if (mouseButton === RIGHT) {
-    particles = []; // Clear the particles array
-    database.ref('particles').remove(); // Clear particles data in Firebase
-  }
 }
 
