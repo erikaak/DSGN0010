@@ -52,8 +52,6 @@ class Particle {
 
   move() {
     this.pos.add(this.vel);
-    // Send particle data to Firebase every time the particle moves
-    database.ref('particles').push(this.serialize());
   }
 
   serialize() {
@@ -75,9 +73,12 @@ class Particle {
       let vy = speed * sin(angle);
       let newParticle = new Particle(this.pos.x, this.pos.y, vx, vy, this.color);
       particles.push(newParticle);
+      // Send new particle data to Firebase
+      database.ref('particles').push(newParticle.serialize());
     }
   }
 }
+
 
 
 let particles = [];
