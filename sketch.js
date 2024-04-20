@@ -136,6 +136,9 @@ function draw() {
   image(graphics, -width / 2, -height / 2);
 }
 
+document.getElementById('submitBtn').addEventListener('click', updateText);
+
+
 function updateText() {
   let inputText = document.getElementById('userInput').value.trim();
   let selectedFont = document.getElementById('fontSelector').value;
@@ -165,6 +168,8 @@ function updateText() {
     document.getElementById('userInput').value = '';
   }
 }
+
+
 
 // Convert 3D world position to 2D screen position
 function worldToScreen(x, y, z) {
