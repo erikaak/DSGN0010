@@ -200,12 +200,14 @@ function mouseDragged() {
 }
 
 
-
 function listenForParticleUpdates() {
   const particleRef = firebase.database().ref('particles');
   particleRef.on('child_added', snapshot => {
-    const newParticle = new Particle(snapshot.val().x, snapshot.val().y, snapshot.val().vx, snapshot.val().vy, snapshot.val().color);
-    particles.push(newParticle);
+    const data = snapshot.val();
+    if (data) {
+      const newParticle = new Particle(data.x, data.y, data.vx, data.vy, data.color);
+      particles.push(newParticle);
+    }
   });
 }
 
