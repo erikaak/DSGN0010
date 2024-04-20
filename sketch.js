@@ -24,12 +24,12 @@ void main() {
     vec2 uv = particles[i].xy;
     float distance = length(st - uv);
     float glow = smoothstep(0.05, 0.0, 1.0 / distance);
-    color += mix(colors[i], vec3(1.0), glow); // Blend particle color with white based on distance
+    color += mix(colors[i], vec3(1.0), glow);
   }
   for (int i = 0; i < int(trailCount); i++) {
     vec2 uv = trail[i];
     float distance = length(st - uv);
-    color += vec3(1.0) / (distance * 100.0); // Add a glowing effect for trails
+    color += vec3(1.0) / (distance * 100.0);
   }
   gl_FragColor = vec4(color, 1.0);
 }
@@ -94,85 +94,44 @@ function setup() {
   // Listen for updates from Firebase
   listenForUpdates();
   listenForParticleUpdates();
-}
 
+  // Setup button to reset view
+  const resetViewBtn = select('#resetViewBtn');
+  resetViewBtn.mousePressed(resetView);
+}
 
 function draw() {
   background(0);
   orbitControl();
-
-  displayObjects(); // Call function to display text objects
-
-  // Display particles
+  displayObjects();
   displayParticles();
-
-  // Call resetView() function to adjust the camera position
-  resetView();
-  
-  // Render the 2D graphics buffer containing the text
-  image(graphics, -width / 2, -height / 2);
-}
-
-
-function updateText() {
-  let inputText = document.getElementById('userInput').value.trim();
-  let selectedFont = document.getElementById('fontSelector').value;
-  let selectedColor = document.getElementById('colorSelector').value;
-  
-  if (inputText !== "") {
-    // Create a new text object with random positioning and the selected attributes
-    let newTextObject = {
-      x: random(-200, 200),
-      y: random(-200, 200),
-      z: random(-200, 200),
-      vx: random(-2, 2), // Velocity in X direction
-      vy: random(-2, 2), // Velocity in Y direction
-      vz: random(-2, 2), // Velocity in Z direction
-      color: selectedColor,
-      font: selectedFont,
-      text: inputText
-    };
-
-    // Add the new text object to the local array for immediate display
-    objects.push(newTextObject);
-
-    // Push the new object to Firebase for storage and synchronization
-    database.ref('userInputs').push(newTextObject);
-
-    // Clear the input field
-    document.getElementById('userInput').value = '';
-  }
-}
-
-// Convert 3D world position to 2D screen position
-function worldToScreen(x, y, z) {
-  let sx = screenX(x, y, z);
-  let sy = screenY(x, y, z);
-  return {x: sx, y: sy};
 }
 
 function displayObjects() {
-  objects.forEach(obj => {
-    push();
-    translate(obj.x, obj.y, obj.z);
-    fill(obj.color);
-    textFont(obj.font);
-    textSize(24);
-    text(obj.text, 0, 0);
-    pop();
+    // Check if the text is going out of the viewable area and adjust
+    objects.forEach(obj => {
+        push();
+        // Translate to the object's position
+        translate(obj.x, obj.y, obj.z);
+        fill(obj.color);
+        textFont(obj.font);
+        textSize(24); // Ensure text size is visible
 
-    // Update object movement
-    obj.x += obj.vx;
-    obj.y += obj.vy;
-    obj.z += obj.vz;
+        // Ensure the text is within the viewable range
+        if (obj.x > width || obj.y > height || obj.z > 500 || obj.x < -width || obj.y < -height || obj.z < -500) {
+            console.log("Text out of view: ", obj.text);
+        } else {
+            text(obj.text, 0, 0);
+        }
+        pop();
 
-    // Wrap or bounce at boundaries
-    obj.x = (obj.x > 200 || obj.x < -200) ? -obj.x : obj.x;
-    obj.y = (obj.y > 200 || obj.y < -200) ? -obj.y : obj.y;
-    obj.z = (obj.z > 200 || obj.z < -200) ? -obj.z : obj.z;
-  });
+        // Simulate object movement or static behavior
+        obj.z += obj.speed * obj.direction;
+        if ((obj.direction === 1 && obj.z > 200) || (obj.direction === -1 && obj.z < -200)) {
+            obj.direction *= -1; // Change direction at boundaries
+        }
+    });
 }
-
 function displayParticles() {
   particles.forEach(p => {
     fill(p.color);
@@ -181,35 +140,20 @@ function displayParticles() {
   });
 }
 
-function mousePressed() {
-  if (mouseButton === RIGHT) {
-    // Clear all particles when right mouse button is clicked
-    particles = [];
-    console.log("Particles cleared"); // Optional: Console log for debugging
-  } else if (mouseButton === LEFT) {
-    let newParticle = new Particle(pmouseX - width / 2, pmouseY - height / 2, mouseX - pmouseX, mouseY - pmouseY);
-    particles.push(newParticle);
-    database.ref('particles').push(newParticle.serialize());
-  }
-}
-
 function mouseDragged() {
   let newParticle = new Particle(pmouseX - width / 2, pmouseY - height / 2, mouseX - pmouseX, mouseY - pmouseY);
   particles.push(newParticle);
   database.ref('particles').push(newParticle.serialize());
 }
 
-
 function listenForParticleUpdates() {
   const particleRef = firebase.database().ref('particles');
   particleRef.on('child_added', snapshot => {
-    const data = snapshot.val();
-    if (data) {
-      const newParticle = new Particle(data.x, data.y, data.vx, data.vy, data.color);
-      particles.push(newParticle);
-    }
+    const p = snapshot.val();
+    particles.push(new Particle(p.x, p.y, p.vx, p.vy, p.color));
   });
 }
+
 
 function listenForUpdates() {
   const database = firebase.database();
@@ -232,24 +176,32 @@ function listenForUpdates() {
 
 
 function resetView() {
-    if (objects.length > 0) {
-        // Calculate the centroid of text objects only
-        let sumX = 0, sumY = 0, sumZ = 0;
-        objects.forEach(obj => {
-            sumX += obj.x;
-            sumY += obj.y;
-            sumZ += obj.z;
-        });
-        let centerX = sumX / objects.length;
-        let centerY = sumY / objects.length;
-        let centerZ = sumZ / objects.length;
+    let centerX = 0, centerY = 0, centerZ = 0;
+    let textCount = 0; // Variable to count the number of text objects
 
-        // Set the camera to look at the centroid of text objects
-        // Adjust the third parameter as needed to ensure a suitable distance
-        let distance = 500; // Adjust this distance to ensure the text fits well in the view
-        camera(centerX, centerY, centerZ + distance, centerX, centerY, centerZ, 0, 1, 0);
+    // Calculate the average position of text objects only
+    objects.forEach(obj => {
+        if (typeof obj.text !== 'undefined') { // Check if the object is a text object
+            centerX += obj.x;
+            centerY += obj.y;
+            centerZ += obj.z;
+            textCount++;
+        }
+    });
+
+    // If there are text objects, calculate the average position and focus the camera
+    if (textCount > 0) {
+        centerX /= textCount;
+        centerY /= textCount;
+        centerZ /= textCount;
+        camera(centerX, centerY, centerZ + 500, centerX, centerY, centerZ, 0, 1, 0);
     } else {
-        // Reset to default view if there are no text objects
-        camera(0, 0, (height / 2) / tan(PI / 6), 0, 0, 0, 0, 1, 0);
+        camera(); // Reset camera to default position
+    }
+
+    // Remove data from Firebase if "xxx" is inputted
+    if (particles.length === 0 && objects.length === 0) {
+        database.ref('particles').remove();
+        database.ref('userInputs').remove();
     }
 }
