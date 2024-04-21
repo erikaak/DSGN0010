@@ -119,6 +119,10 @@ function updateText() {
       text: inputText
     });
 
+    objects.push(inputText);
+    database.ref('userInputs').push(inputText);
+
+    // Clear the input field
     document.getElementById('userInput').value = '';
   }
 }
