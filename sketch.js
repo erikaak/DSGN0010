@@ -124,13 +124,7 @@ function updateText() {
     objects.push(newObject);
 
     // Push the new object to Firebase
-    database.ref('userInputs').push(newObject, (error) => {
-      if (error) {
-        console.error("Data could not be saved." + error);
-      } else {
-        console.log("Data saved successfully.");
-      }
-    });
+    database.ref('userInput').push(newObject);
 
     // Clear the input field
     document.getElementById('userInput').value = '';
