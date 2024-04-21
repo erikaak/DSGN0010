@@ -106,9 +106,10 @@ function updateText() {
   let inputText = document.getElementById('userInput').value.trim();
   let selectedFont = document.getElementById('fontSelector').value;
   let selectedColor = document.getElementById('colorSelector').value;
+  
   if (inputText !== "") {
     // Random positions for the new object
-    objects.push({
+    let newObject = {
       x: random(-200, 200),
       y: random(-200, 200),
       z: random(-200, 200),
@@ -117,15 +118,25 @@ function updateText() {
       color: selectedColor,
       font: selectedFont,
       text: inputText
-    });
+    };
 
-    objects.push(inputText);
-    database.ref('userInputs').push(inputText);
+    // Add the new object to the objects array for rendering
+    objects.push(newObject);
+
+    // Push the new object to Firebase
+    database.ref('userInputs').push(newObject, (error) => {
+      if (error) {
+        console.error("Data could not be saved." + error);
+      } else {
+        console.log("Data saved successfully.");
+      }
+    });
 
     // Clear the input field
     document.getElementById('userInput').value = '';
   }
 }
+
 
 
 
