@@ -65,16 +65,17 @@ class Particle {
   }
 
   explode() {
-  let numParticles = int(random(5, 15));
-  for (let i = 0; i < numParticles; i++) {
-    let angle = random(TWO_PI);
-    let speed = random(1, 3);
-    let vx = speed * cos(angle);
-    let vy = speed * sin(angle);
-    let newParticle = new Particle(this.pos.x, this.pos.y, vx, vy, this.color);
-    particles.push(newParticle);
-    // Send new particle data to Firebase
-    database.ref('particles').push(newParticle.serialize());
+    let numParticles = int(random(5, 15));
+    for (let i = 0; i < numParticles; i++) {
+      let angle = random(TWO_PI);
+      let speed = random(1, 3);
+      let vx = speed * cos(angle);
+      let vy = speed * sin(angle);
+      let newParticle = new Particle(this.pos.x, this.pos.y, vx, vy, this.color);
+      particles.push(newParticle);
+      // Send new particle data to Firebase
+      database.ref('particles').push(newParticle.serialize());
+    }
   }
 }
 
@@ -185,10 +186,19 @@ function draw() {
 
 
 function listenForParticleUpdates() {
+  // Listen for real-time updates from Firebase
   const particleRef = firebase.database().ref('particles');
   particleRef.on('child_added', snapshot => {
-    const p = snapshot.val();
-    particles.push(new Particle(p.x, p.y, p.vx, p.vy, p.color));
+    const data = snapshot.val();
+    const newParticle = new Particle(data.x, data.y, data.vx, data.vy, data.color);
+    particles.push(newParticle);
+  });
+  
+  // Listen for particle removal
+  particleRef.on('child_removed', snapshot => {
+    const data = snapshot.val();
+    // Find and remove the particle from the local array
+    particles = particles.filter(p => !(p.x === data.x && p.y === data.y && p.vx === data.vx && p.vy === data.vy));
   });
 }
 
