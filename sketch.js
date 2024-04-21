@@ -79,7 +79,6 @@ class Particle {
   }
 }
 
-
 let particles = [];
 let graphics; // 2D graphics buffer for text
 let objects = []; // Array to hold 3D objects
@@ -186,19 +185,10 @@ function draw() {
 
 
 function listenForParticleUpdates() {
-  // Listen for real-time updates from Firebase
   const particleRef = firebase.database().ref('particles');
   particleRef.on('child_added', snapshot => {
-    const data = snapshot.val();
-    const newParticle = new Particle(data.x, data.y, data.vx, data.vy, data.color);
-    particles.push(newParticle);
-  });
-  
-  // Listen for particle removal
-  particleRef.on('child_removed', snapshot => {
-    const data = snapshot.val();
-    // Find and remove the particle from the local array
-    particles = particles.filter(p => !(p.x === data.x && p.y === data.y && p.vx === data.vx && p.vy === data.vy));
+    const p = snapshot.val();
+    particles.push(new Particle(p.x, p.y, p.vx, p.vy, p.color));
   });
 }
 
@@ -257,12 +247,8 @@ function resetView() {
 
 
 function mouseDragged() {
-  let newParticle = new Particle(pmouseX - width / 2, pmouseY - height / 2, mouseX - pmouseX, mouseY - pmouseY);
-  particles.push(newParticle);
-  database.ref('particles').push(newParticle.serialize());
+  particles.push(new Particle(pmouseX - width / 2, pmouseY - height / 2, mouseX - pmouseX, mouseY - pmouseY));
 }
-
-
 
 function mousePressed() {
   // Check if the mouse button pressed is the left mouse button
@@ -271,28 +257,18 @@ function mousePressed() {
     let randomAction = random();
     if (randomAction < 0.5) {
       // Change color
-      let particleIndex = int(random(particles.length));
-      let selectedParticle = particles[particleIndex];
-      selectedParticle.color = random(colorScheme);
-      // Update the color in Firebase for this particle
-      database.ref(`particles/${selectedParticle.id}`).update({ color: selectedParticle.color });
+      let particleIndex = int(random(particles.length)); // Choose a random particle
+      particles[particleIndex].color = random(colorScheme); // Change its color to a random color
     } else {
       // Explode
-      let particleIndex = int(random(particles.length));
-      let selectedParticle = particles[particleIndex];
-      selectedParticle.explode();
-      // Remove the original particle from Firebase
-      database.ref(`particles/${selectedParticle.id}`).remove();
-      // Remove the original particle from the local array
-      particles.splice(particleIndex, 1);
+      let particleIndex = int(random(particles.length)); // Choose a random particle
+      particles[particleIndex].explode(); // Make it explode
+      particles.splice(particleIndex, 1); // Remove the original particle
     }
   }
-
+  
   // Clear particles if right-clicked
   if (mouseButton === RIGHT) {
-    // Clear all particles from Firebase
-    database.ref('particles').remove();
-    // Clear local particles array
     particles = [];
   }
 }
