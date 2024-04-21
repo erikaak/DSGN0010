@@ -65,19 +65,19 @@ class Particle {
   }
 
   explode() {
-    let numParticles = int(random(5, 15));
-    for (let i = 0; i < numParticles; i++) {
-      let angle = random(TWO_PI);
-      let speed = random(1, 3);
-      let vx = speed * cos(angle);
-      let vy = speed * sin(angle);
-      let newParticle = new Particle(this.pos.x, this.pos.y, vx, vy, this.color);
-      particles.push(newParticle);
-      // Send new particle data to Firebase
-      database.ref('particles').push(newParticle.serialize());
-    }
+  let numParticles = int(random(5, 15));
+  for (let i = 0; i < numParticles; i++) {
+    let angle = random(TWO_PI);
+    let speed = random(1, 3);
+    let vx = speed * cos(angle);
+    let vy = speed * sin(angle);
+    let newParticle = new Particle(this.pos.x, this.pos.y, vx, vy, this.color);
+    particles.push(newParticle);
+    // Send new particle data to Firebase
+    database.ref('particles').push(newParticle.serialize());
   }
 }
+
 
 let particles = [];
 let graphics; // 2D graphics buffer for text
@@ -193,6 +193,7 @@ function listenForParticleUpdates() {
 }
 
 
+
 function listenForUpdates() {
   const database = firebase.database();
   database.ref('userInput').on('child_added', function(snapshot) {
@@ -246,8 +247,11 @@ function resetView() {
 
 
 function mouseDragged() {
-  particles.push(new Particle(pmouseX - width / 2, pmouseY - height / 2, mouseX - pmouseX, mouseY - pmouseY));
+  let newParticle = new Particle(pmouseX - width / 2, pmouseY - height / 2, mouseX - pmouseX, mouseY - pmouseY);
+  particles.push(newParticle);
+  database.ref('particles').push(newParticle.serialize());
 }
+
 
 function mousePressed() {
   // Check if the mouse button pressed is the left mouse button
