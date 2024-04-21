@@ -253,6 +253,7 @@ function mouseDragged() {
 }
 
 
+
 function mousePressed() {
   // Check if the mouse button pressed is the left mouse button
   if (mouseButton === LEFT) {
@@ -260,18 +261,28 @@ function mousePressed() {
     let randomAction = random();
     if (randomAction < 0.5) {
       // Change color
-      let particleIndex = int(random(particles.length)); // Choose a random particle
-      particles[particleIndex].color = random(colorScheme); // Change its color to a random color
+      let particleIndex = int(random(particles.length));
+      let selectedParticle = particles[particleIndex];
+      selectedParticle.color = random(colorScheme);
+      // Update the color in Firebase for this particle
+      database.ref(`particles/${selectedParticle.id}`).update({ color: selectedParticle.color });
     } else {
       // Explode
-      let particleIndex = int(random(particles.length)); // Choose a random particle
-      particles[particleIndex].explode(); // Make it explode
-      particles.splice(particleIndex, 1); // Remove the original particle
+      let particleIndex = int(random(particles.length));
+      let selectedParticle = particles[particleIndex];
+      selectedParticle.explode();
+      // Remove the original particle from Firebase
+      database.ref(`particles/${selectedParticle.id}`).remove();
+      // Remove the original particle from the local array
+      particles.splice(particleIndex, 1);
     }
   }
-  
+
   // Clear particles if right-clicked
   if (mouseButton === RIGHT) {
+    // Clear all particles from Firebase
+    database.ref('particles').remove();
+    // Clear local particles array
     particles = [];
   }
 }
