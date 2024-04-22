@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Sharing Thoughts</title>
+    <title>Interactive p5.js Sketch</title>
     <link rel="stylesheet" href="styles.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/p5.js/1.4.0/p5.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
@@ -10,8 +10,8 @@
 </head>
 <body>
     <div class="container">
-        <p id="intro">What does <b>home</b> mean to you<span id="ellipsis">...</span>?</p>
-        <input type="text" id="userInput" placeholder="Share your thoughts here">
+        <p id="intro">Tell me about <span id="ellipsis">...</span></p>
+        <input type="text" id="userInput" placeholder="Enter your text here">
         <select id="fontSelector">
             <option value="Arial">Arial</option>
             <option value="Georgia">Georgia</option>
@@ -35,7 +35,71 @@
         <button id="resetViewBtn" onclick="resetView()">Reset View</button>
     </div>
     <div id="webglCanvas"></div>
-    <script src="firebase-setup.js"></script>
+
+    <script>
+        // Your web app's Firebase configuration
+        const firebaseConfig = {
+          apiKey: "AIzaSyCnET0MG8IWwTtvX1Y5m9IKRetZRHUJLY8",
+          authDomain: "dsgn0010-405.firebaseapp.com",
+          databaseURL: "https://dsgn0010-405-default-rtdb.firebaseio.com",
+          projectId: "dsgn0010-405",
+          storageBucket: "dsgn0010-405.appspot.com",
+          messagingSenderId: "672215177148",
+          appId: "1:672215177148:web:9b4a888eaa64f67825fdb9"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
+        // Listen for changes to user inputs in real-time and update the display
+        database.ref('userInput').on('child_added', function(snapshot) {
+            const data = snapshot.val();
+            if (data) {
+                displayUserInput(data);
+            }
+        });
+
+        function displayUserInput(data) {
+            // Update the p5.js sketch with user input
+            objects.push({
+                x: random(-200, 200),
+                y: random(-200, 200),
+                z: random(-200, 200),
+                speed: random(1, 5),
+                direction: random([-1, 1]),
+                color: data.color,
+                font: data.font,
+                text: data.text
+            });
+        }
+
+        // Submit button click event
+        document.getElementById("submitBtn").addEventListener("click", function() {
+            const inputText = document.getElementById('userInput').value.trim();
+            const selectedFont = document.getElementById('fontSelector').value;
+            const selectedColor = document.getElementById('colorSelector').value;
+            if (inputText !== "") {
+                // Save to Firebase and clear the input field
+                saveToFirebase(inputText, selectedFont, selectedColor);
+                document.getElementById('userInput').value = '';
+            }
+        });
+
+        function saveToFirebase(text, font, color) {
+            // Push user input data to Firebase database
+            database.ref('userInput').push({
+                text: text,
+                font: font,
+                color: color,
+                timestamp: firebase.database.ServerValue.TIMESTAMP
+            });
+        }
+
+        
+        
+    </script>
+
     <script src="sketch.js"></script>
 </body>
 </html>
