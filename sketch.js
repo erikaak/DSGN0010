@@ -174,13 +174,15 @@ function draw() {
   });
   image(graphics, -width / 2, -height / 2);
 
-  // Display particles
+  displayParticles();
+}
+
+function displayParticles() {
   particles.forEach(p => {
     fill(p.color);
     ellipse(p.pos.x, p.pos.y, 8, 8);
     p.move();
   });
-}
 
 
 
