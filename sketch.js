@@ -247,8 +247,11 @@ function resetView() {
 
 
 function mouseDragged() {
-  particles.push(new Particle(pmouseX - width / 2, pmouseY - height / 2, mouseX - pmouseX, mouseY - pmouseY));
+  let newParticle = new Particle(pmouseX - width / 2, pmouseY - height / 2, mouseX - pmouseX, mouseY - pmouseY);
+  particles.push(newParticle);
+  database.ref('particles').push(newParticle.serialize());
 }
+
 
 function mousePressed() {
   // Check if the mouse button pressed is the left mouse button
