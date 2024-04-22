@@ -63,6 +63,10 @@ body {
     background-color: #3b6cb5;
 }
 
+#ellipsis {
+    display: inline-block;
+    animation: blink 1s infinite;
+}
 
 @keyframes blink {
     0% { opacity: 0; }
