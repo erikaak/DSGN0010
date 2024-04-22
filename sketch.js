@@ -277,6 +277,3 @@ function mousePressed() {
     particles = [];
   }
 }
-
-
-
