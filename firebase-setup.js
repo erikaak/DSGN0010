@@ -58,12 +58,6 @@ database.ref('userInput').push({
 });
 }
 
-// Handle user input and write to Firebase
-function handleInput(event) {
-    const text = event.target.value;
-    database.ref('currentText').set({ text });
-}
-
 // Listen for real-time updates
 database.ref('currentText').on('value', (snapshot) => {
     const data = snapshot.val();
