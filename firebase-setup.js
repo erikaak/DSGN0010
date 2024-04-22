@@ -1,12 +1,12 @@
 // Firebase Configuration
 const firebaseConfig = {
-    apiKey: "AIzaSyBzosBKCqg8aiVJrX5IaMTKvbnyZYQGfcQ",
-    authDomain: "dsgn-0010.firebaseapp.com",
-    databaseURL: "https://dsgn-0010-default-rtdb.firebaseio.com",
-    projectId: "dsgn-0010",
-    storageBucket: "dsgn-0010.appspot.com",
-    messagingSenderId: "786787914010",
-    appId: "1:786787914010:web:229c5ec98abbf1992b5ca3"
+    apiKey: "AIzaSyCr0modZkiiHbrYsSCQijpiCkPWE7v7Lag",
+    authDomain: "dsgn-0010-final-project.firebaseapp.com",
+    databaseURL: "https://dsgn-0010-final-project-default-rtdb.firebaseio.com",
+    projectId: "dsgn-0010-final-project",
+    storageBucket: "dsgn-0010-final-project.appspot.com",
+    messagingSenderId: "764278519998",
+    appId: "1:764278519998:web:81efd8f6ea0768ccc6c6ef"
 };
 
 // Initialize Firebase
