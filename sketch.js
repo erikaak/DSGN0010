@@ -89,7 +89,7 @@ function setup() {
   graphics.textSize(20);
   graphics.textAlign(CENTER, CENTER);
   pixelDensity(1);
-  noCursor();
+  // noCursor();
 
   // Listen for updates from Firebase
   listenForUpdates();
