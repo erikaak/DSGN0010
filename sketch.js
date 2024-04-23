@@ -106,10 +106,9 @@ function updateText() {
   let inputText = document.getElementById('userInput').value.trim();
   let selectedFont = document.getElementById('fontSelector').value;
   let selectedColor = document.getElementById('colorSelector').value;
-  
   if (inputText !== "") {
     // Random positions for the new object
-    let newObject = {
+    objects.push({
       x: random(-200, 200),
       y: random(-200, 200),
       z: random(-200, 200),
@@ -118,19 +117,11 @@ function updateText() {
       color: selectedColor,
       font: selectedFont,
       text: inputText
-    };
+    });
 
-    // Add the new object to the objects array for rendering
-    objects.push(newObject);
-
-    // Push the new object to Firebase
-    database.ref('userInput').push(newObject);
-
-    // Clear the input field
     document.getElementById('userInput').value = '';
   }
 }
-
 
 
 
@@ -174,15 +165,13 @@ function draw() {
   });
   image(graphics, -width / 2, -height / 2);
 
-  displayParticles();
-}
-
-function displayParticles() {
+  // Display particles
   particles.forEach(p => {
     fill(p.color);
     ellipse(p.pos.x, p.pos.y, 8, 8);
     p.move();
   });
+}
 
 
 
@@ -193,7 +182,6 @@ function listenForParticleUpdates() {
     particles.push(new Particle(p.x, p.y, p.vx, p.vy, p.color));
   });
 }
-
 
 
 function listenForUpdates() {
@@ -249,11 +237,8 @@ function resetView() {
 
 
 function mouseDragged() {
-  let newParticle = new Particle(pmouseX - width / 2, pmouseY - height / 2, mouseX - pmouseX, mouseY - pmouseY);
-  particles.push(newParticle);
-  database.ref('particles').push(newParticle.serialize());
+  particles.push(new Particle(pmouseX - width / 2, pmouseY - height / 2, mouseX - pmouseX, mouseY - pmouseY));
 }
-
 
 function mousePressed() {
   // Check if the mouse button pressed is the left mouse button
@@ -276,5 +261,4 @@ function mousePressed() {
   if (mouseButton === RIGHT) {
     particles = [];
   }
-}}
-
+}
