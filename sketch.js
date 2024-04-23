@@ -276,5 +276,5 @@ function mousePressed() {
   if (mouseButton === RIGHT) {
     particles = [];
   }
-}
+}}
 
