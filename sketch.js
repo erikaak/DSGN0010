@@ -106,9 +106,10 @@ function updateText() {
   let inputText = document.getElementById('userInput').value.trim();
   let selectedFont = document.getElementById('fontSelector').value;
   let selectedColor = document.getElementById('colorSelector').value;
+  
   if (inputText !== "") {
     // Random positions for the new object
-    objects.push({
+    let newObject = {
       x: random(-200, 200),
       y: random(-200, 200),
       z: random(-200, 200),
@@ -117,11 +118,19 @@ function updateText() {
       color: selectedColor,
       font: selectedFont,
       text: inputText
-    });
+    };
 
+    // Add the new object to the objects array for rendering
+    objects.push(newObject);
+
+    // Push the new object to Firebase
+    database.ref('userInput').push(newObject);
+
+    // Clear the input field
     document.getElementById('userInput').value = '';
   }
 }
+
 
 
 
@@ -184,6 +193,7 @@ function listenForParticleUpdates() {
 }
 
 
+
 function listenForUpdates() {
   const database = firebase.database();
   database.ref('userInput').on('child_added', function(snapshot) {
@@ -237,8 +247,11 @@ function resetView() {
 
 
 function mouseDragged() {
-  particles.push(new Particle(pmouseX - width / 2, pmouseY - height / 2, mouseX - pmouseX, mouseY - pmouseY));
+  let newParticle = new Particle(pmouseX - width / 2, pmouseY - height / 2, mouseX - pmouseX, mouseY - pmouseY);
+  particles.push(newParticle);
+  database.ref('particles').push(newParticle.serialize());
 }
+
 
 function mousePressed() {
   // Check if the mouse button pressed is the left mouse button
