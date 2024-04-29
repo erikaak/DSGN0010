@@ -183,9 +183,7 @@ function draw() {
       drawCone(50); // Increase the size of the cone
     }
     pop();
-
   });
-  image(graphics, -width / 2, -height / 2);
 
   // Display particles
   particles.forEach(p => {
@@ -193,7 +191,11 @@ function draw() {
     ellipse(p.pos.x, p.pos.y, 8, 8);
     p.move();
   });
+
+  // Draw 2D text graphics on top of 3D shapes
+  image(graphics, -width / 2, -height / 2);
 }
+
 
 
 
