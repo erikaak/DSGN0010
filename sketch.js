@@ -298,6 +298,7 @@ function mousePressed() {
 
 
 
+
   
   // Clear particles if right-clicked
   if (mouseButton === RIGHT) {
