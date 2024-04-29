@@ -108,34 +108,36 @@ function setup() {
 }
 
 function updateText() {
-  let inputText = document.getElementById('userInput').value.trim();
-  let selectedFont = document.getElementById('fontSelector').value;
-  let selectedColor = document.getElementById('colorSelector').value;
-  
-  if (inputText !== "") {
-    // Random positions for the new object
-    let newObject = {
-      x: random(-200, 200),
-      y: random(-200, 200),
-      z: random(-200, 200),
-      speed: random(1, 5),
-      direction: random([-1, 1]),
-      color: selectedColor,
-      font: selectedFont,
-      text: inputText,
-      enlarged: false,
-      size: 24 // Default size
-    };
+    let inputText = document.getElementById('userInput').value.trim();
+    let selectedFont = document.getElementById('fontSelector').value;
+    let selectedColor = document.getElementById('colorSelector').value;
+    let selectedShape = document.getElementById('shapeSelector').value; // Get selected shape
 
-    // Add the new object to the objects array for rendering
-    objects.push(newObject);
+    if (inputText !== "") {
+        // Random positions for the new object
+        let newObject = {
+            x: random(-200, 200),
+            y: random(-200, 200),
+            z: random(-200, 200),
+            speed: random(1, 5),
+            direction: random([-1, 1]),
+            color: selectedColor,
+            font: selectedFont,
+            text: inputText,
+            enlarged: false,
+            size: 24, // Default size
+            shape: selectedShape // Include selected shape
+        };
 
-    // Push the new object to Firebase
-    firebase.database().ref('userInput').push(newObject);
+        // Add the new object to the objects array for rendering
+        objects.push(newObject);
 
-    // Clear the input field
-    document.getElementById('userInput').value = '';
-  }
+        // Push the new object to Firebase
+        firebase.database().ref('userInput').push(newObject);
+
+        // Clear the input field
+        document.getElementById('userInput').value = '';
+    }
 }
 
 function draw() {
