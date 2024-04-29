@@ -274,16 +274,22 @@ function mousePressed() {
       let distance = dist(mouseX - width / 2, mouseY - height / 2, obj.x, obj.y);
       // If mouse is over the object, temporarily increase its size
       if (distance < obj.size / 2) {
-        obj.enlarged = true; // Mark object as enlarged
+        // Mark object as enlarged
+        obj.enlarged = true;
+        // Increase size temporarily
+        obj.originalSize = obj.size; // Store original size
         obj.size *= 4; // Increase size
         setTimeout(() => {
-          obj.size /= 4; // Restore original size after a delay
-          obj.enlarged = false; // Mark object as not enlarged
+          // Restore original size after a delay
+          obj.size = obj.originalSize;
+          // Mark object as not enlarged
+          obj.enlarged = false;
         }, 1000); // Adjust the delay time as needed
       }
     });
   }
 }
+
 
 
   
