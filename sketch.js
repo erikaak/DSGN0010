@@ -266,12 +266,11 @@ function mouseDragged() {
 
 
 function mousePressed() {
-  // Check if the mouse button pressed is the left mouse button
   if (mouseButton === LEFT) {
     // Loop through objects and check if the mouse is over any of them
     objects.forEach(obj => {
-      // Calculate distance between mouse position and object position
-      let distance = dist(mouseX - width / 2, mouseY - height / 2, obj.x, obj.y);
+      // Calculate distance between mouse position and object position in 3D space
+      let distance = dist(mouseX - width / 2, mouseY - height / 2, 0, obj.x, obj.y, obj.z);
       // If mouse is over the object, temporarily increase its size
       if (distance < obj.size / 2) {
         // Mark object as enlarged
@@ -279,14 +278,10 @@ function mousePressed() {
         // Store original size
         obj.originalSize = obj.size;
         // Increase size temporarily
-        obj.size *= 10; // Increase size
-        // Adjust text size if necessary
-        textSize(obj.size);
+        obj.size *= 2; // Adjust the scaling factor as needed
         // Restore original size after a delay
         setTimeout(() => {
           obj.size = obj.originalSize;
-          // Adjust text size back to default
-          textSize(24);
           // Mark object as not enlarged
           obj.enlarged = false;
         }, 1000); // Adjust the delay time as needed
