@@ -175,7 +175,13 @@ function draw() {
     push();
     translate(obj.x, obj.y, obj.z);
     fill(obj.color);
-    box(20); // Drawing a simple box
+    if (obj.shape === 'box') {
+      box(20); // Drawing a box
+    } else if (obj.shape === 'sphere') {
+      sphere(20); // Drawing a sphere
+    } else if (obj.shape === 'pyramid') {
+      // Drawing a pyramid (you'll need to implement this)
+    }
     pop();
   });
   image(graphics, -width / 2, -height / 2);
