@@ -128,7 +128,7 @@ function updateText() {
     objects.push(newObject);
 
     // Push the new object to Firebase
-    database.ref('userInput').push(newObject);
+    firebase.database().ref('userInput').push(newObject);
 
     // Clear the input field
     document.getElementById('userInput').value = '';
