@@ -74,7 +74,7 @@ class Particle {
       let newParticle = new Particle(this.pos.x, this.pos.y, vx, vy, this.color);
       particles.push(newParticle);
       // Send new particle data to Firebase
-      database.ref('particles').push(newParticle.serialize());
+      firebase.database().ref('particles').push(newParticle.serialize());
     }
   }
 }
@@ -270,4 +270,3 @@ function mousePressed() {
     particles = [];
   }
 }
-
