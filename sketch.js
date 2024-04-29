@@ -179,8 +179,8 @@ function draw() {
       box(20); // Drawing a box
     } else if (obj.shape === 'sphere') {
       sphere(20); // Drawing a sphere
-    } else if (obj.shape === 'pyramid') {
-      // Drawing a pyramid (you'll need to implement this)
+    } else if (obj.shape === 'cone') {
+      drawCone(20); // Drawing a cone
     }
     pop();
   });
@@ -287,3 +287,24 @@ function mousePressed() {
     particles = [];
   }
 }
+
+function drawCone(size) {
+  beginShape();
+  for (let angle = 0; angle < TWO_PI; angle += PI / 12) {
+    let x = sin(angle) * size;
+    let y = -size / 2;
+    let z = cos(angle) * size;
+    vertex(x, y, z);
+  }
+  endShape(CLOSE);
+
+  beginShape(TRIANGLE_FAN);
+  vertex(0, size / 2, 0);
+  for (let angle = 0; angle < TWO_PI; angle += PI / 12) {
+    let x = sin(angle) * size;
+    let z = cos(angle) * size;
+    vertex(x, -size / 2, z);
+  }
+  endShape(CLOSE);
+}
+
