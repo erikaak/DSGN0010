@@ -279,7 +279,7 @@ function mousePressed() {
         // Store original size
         obj.originalSize = obj.size;
         // Increase size temporarily
-        obj.size *= 4; // Increase size
+        obj.size *= 10; // Increase size
         // Adjust text size if necessary
         textSize(obj.size);
         // Restore original size after a delay
