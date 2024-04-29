@@ -171,18 +171,19 @@ function draw() {
     graphics.fill(obj.color);
     graphics.textFont(obj.font);
     graphics.text(obj.text, obj.x + width / 2, obj.y + height / 2, obj.z);
-  
+
     push();
     translate(obj.x, obj.y, obj.z);
     fill(obj.color);
     if (obj.shape === 'box') {
-      box(20); // Drawing a box
+      box(50); // Increase the size of the box
     } else if (obj.shape === 'sphere') {
-      sphere(20); // Drawing a sphere
+      sphere(50); // Increase the size of the sphere
     } else if (obj.shape === 'cone') {
-      drawCone(20); // Drawing a cone
+      drawCone(50); // Increase the size of the cone
     }
     pop();
+
   });
   image(graphics, -width / 2, -height / 2);
 
