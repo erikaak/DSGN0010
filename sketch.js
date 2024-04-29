@@ -276,12 +276,17 @@ function mousePressed() {
       if (distance < obj.size / 2) {
         // Mark object as enlarged
         obj.enlarged = true;
+        // Store original size
+        obj.originalSize = obj.size;
         // Increase size temporarily
-        obj.originalSize = obj.size; // Store original size
         obj.size *= 4; // Increase size
+        // Adjust text size if necessary
+        textSize(obj.size);
+        // Restore original size after a delay
         setTimeout(() => {
-          // Restore original size after a delay
           obj.size = obj.originalSize;
+          // Adjust text size back to default
+          textSize(24);
           // Mark object as not enlarged
           obj.enlarged = false;
         }, 1000); // Adjust the delay time as needed
@@ -289,6 +294,7 @@ function mousePressed() {
     });
   }
 }
+
 
 
 
