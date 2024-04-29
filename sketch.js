@@ -174,11 +174,11 @@ function draw() {
     translate(obj.x, obj.y, obj.z);
     fill(obj.color);
     if (obj.shape === "0") {
-      box(50);
+      box(20);
     } else if (obj.shape === "1") {
-      sphere(50);
+      sphere(20);
     } else if (obj.shape === "2") {
-      drawCone(100);
+      drawCone(20);
     }
     pop();
   });
