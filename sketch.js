@@ -270,10 +270,9 @@ function mousePressed() {
   if (mouseButton === LEFT) {
     // Loop through objects and check if the mouse is over any of them
     objects.forEach(obj => {
-      let screenPos = graphics.screenPosition(obj.x + width / 2, obj.y + height / 2, obj.z);
-      let distance = dist(screenPos.x, screenPos.y, mouseX, mouseY);
-      
-      // Check if the mouse is over the object
+      // Calculate distance between mouse position and object position
+      let distance = dist(mouseX - width / 2, mouseY - height / 2, obj.x, obj.y);
+      // If mouse is over the object, temporarily increase its size
       if (distance < obj.size / 2) {
         obj.enlarged = true; // Mark object as enlarged
         obj.size *= 4; // Increase size
@@ -285,6 +284,7 @@ function mousePressed() {
     });
   }
 }
+
 
   
   // Clear particles if right-clicked
