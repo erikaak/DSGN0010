@@ -1,6 +1,5 @@
 let selectedShape = 'box'; // Default shape is a box
 
-
 // WebGL shader code for visual effects
 let vertShader = `
 precision mediump float;
@@ -77,7 +76,7 @@ class Particle {
       let newParticle = new Particle(this.pos.x, this.pos.y, vx, vy, this.color);
       particles.push(newParticle);
       // Send new particle data to Firebase
-      firebase.database().ref('particles').push(newParticle.serialize());
+      database.ref('particles').push(newParticle.serialize());
     }
   }
 }
@@ -101,11 +100,9 @@ function setup() {
   // Setup button to reset view
   const resetViewBtn = select('#resetViewBtn');
   resetViewBtn.mousePressed(resetView);
-
-  // Setup button to update text
-  const updateTextBtn = select('#submitBtn');
-  updateTextBtn.mousePressed(updateText);
 }
+
+
 
 function updateText() {
     let inputText = document.getElementById('userInput').value.trim();
@@ -140,6 +137,9 @@ function updateText() {
     }
 }
 
+
+
+
 function draw() {
   background(0);
   orbitControl();
@@ -147,18 +147,17 @@ function draw() {
   // Update and draw objects and text
   objects.forEach(obj => {
     push();
-    if (isMouseOverObject(obj)) {
-      enlargeObject(obj);
-      enlargedObjects.push(obj);
-      resetObjectSize(); // Reset object size after a short delay
+    // Update position based on velocity
+    obj.x += obj.speed * obj.direction;
+    // Reset position if it goes beyond certain bounds
+    if ((obj.direction === 1 && obj.x > 200) || (obj.direction === -1 && obj.x < -200)) {
+      obj.direction *= -1;
     }
-    if (obj.enlarged) {
-      textSize(obj.size); // Set the temporary size
-    } else {
-      textSize(24); // Default size
-    }
-    // Draw text at object's location
-    text(obj.text, obj.x, obj.y);
+    translate(obj.x, obj.y, obj.z);
+    fill(obj.color);
+    textFont(obj.font);
+    textSize(24); // Adjust text size if necessary
+    text(obj.text, 0, 0); // Draw text at object's location
     pop();
   });
 
@@ -189,6 +188,8 @@ function draw() {
   });
 }
 
+
+
 function listenForParticleUpdates() {
   const particleRef = firebase.database().ref('particles');
   particleRef.on('child_added', snapshot => {
@@ -196,6 +197,8 @@ function listenForParticleUpdates() {
     particles.push(new Particle(p.x, p.y, p.vx, p.vy, p.color));
   });
 }
+
+
 
 function listenForUpdates() {
   const database = firebase.database();
@@ -215,6 +218,7 @@ function listenForUpdates() {
     }
   });
 }
+
 
 function resetView() {
     let centerX = 0, centerY = 0, centerZ = 0;
@@ -247,11 +251,13 @@ function resetView() {
     }
 }
 
+
 function mouseDragged() {
   let newParticle = new Particle(pmouseX - width / 2, pmouseY - height / 2, mouseX - pmouseX, mouseY - pmouseY);
   particles.push(newParticle);
   database.ref('particles').push(newParticle.serialize());
 }
+
 
 function mousePressed() {
   // Check if the mouse button pressed is the left mouse button
