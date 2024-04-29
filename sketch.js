@@ -207,22 +207,23 @@ function listenForParticleUpdates() {
 
 
 function listenForUpdates() {
-  const database = firebase.database();
-  database.ref('userInput').on('child_added', function(snapshot) {
-    const data = snapshot.val();
-    if (data) {
-      objects.push({
-        x: random(-200, 200),
-        y: random(-200, 200),
-        z: random(-200, 200),
-        speed: random(1, 5),
-        direction: random([-1, 1]),
-        color: data.color,
-        font: data.font,
-        text: data.text
-      });
-    }
-  });
+    const database = firebase.database();
+    database.ref('userInput').on('child_added', function(snapshot) {
+        const data = snapshot.val();
+        if (data) {
+            objects.push({
+                x: random(-200, 200),
+                y: random(-200, 200),
+                z: random(-200, 200),
+                speed: random(1, 5),
+                direction: random([-1, 1]),
+                color: data.color,
+                font: data.font,
+                text: data.text,
+                shape: data.shape // Retrieve the selected shape from the database
+            });
+        }
+    });
 }
 
 
