@@ -1,3 +1,6 @@
+let selectedShape = 'box'; // Default shape is a box
+
+
 // WebGL shader code for visual effects
 let vertShader = `
 precision mediump float;
