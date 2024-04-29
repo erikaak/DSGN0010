@@ -1,3 +1,4 @@
+// WebGL shader code for visual effects
 let vertShader = `
 precision mediump float;
 attribute vec3 aPosition;
@@ -97,6 +98,10 @@ function setup() {
   // Setup button to reset view
   const resetViewBtn = select('#resetViewBtn');
   resetViewBtn.mousePressed(resetView);
+
+  // Setup button to update text
+  const updateTextBtn = select('#submitBtn');
+  updateTextBtn.mousePressed(updateText);
 }
 
 function updateText() {
