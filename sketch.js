@@ -266,7 +266,7 @@ function mouseDragged() {
 
 
 function mousePressed() {
-  if (mouseButton === RIGHT) {
+  if (mouseButton === LEFT) {
     // Loop through objects and check if the mouse is over any of them
     objects.forEach(obj => {
       // Calculate distance between mouse position and object position in 3D space
