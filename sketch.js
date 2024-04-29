@@ -83,6 +83,8 @@ let particles = [];
 let graphics; // 2D graphics buffer for text
 let objects = []; // Array to hold 3D objects
 
+let clickedObjectIndex = -1; // Variable to store the index of the clicked object
+
 function setup() {
   createCanvas(windowWidth * 2/3, windowHeight, WEBGL).parent('webglCanvas');
   graphics = createGraphics(windowWidth / 3, windowHeight);
@@ -99,8 +101,6 @@ function setup() {
   const resetViewBtn = select('#resetViewBtn');
   resetViewBtn.mousePressed(resetView);
 }
-
-
 
 function updateText() {
     let inputText = document.getElementById('userInput').value.trim();
@@ -140,7 +140,7 @@ function draw() {
   orbitControl();
   
   // Update and draw objects and text
-  objects.forEach(obj => {
+  objects.forEach((obj, index) => {
     push();
     // Update position based on velocity
     obj.x += obj.speed * obj.direction;
@@ -158,7 +158,7 @@ function draw() {
 
   // Draw 3D objects
   graphics.clear();
-  objects.forEach(obj => {
+  objects.forEach((obj, index) => {
     obj.z += obj.speed * obj.direction;
     if ((obj.direction === 1 && obj.z > 200) || (obj.direction === -1 && obj.z < -200)) {
       obj.direction *= -1; // Change direction upon reaching a certain point
@@ -175,6 +175,9 @@ function draw() {
     } else if (obj.shape === "1") {
       sphere(20);
     } else if (obj.shape === "2") {
+      if (clickedObjectIndex === index) {
+        scale(2); // Increase size temporarily
+      }
       drawCone(20);
     }
     pop();
@@ -191,10 +194,6 @@ function draw() {
   image(graphics, -width / 2, -height / 2);
 }
 
-
-
-
-
 function listenForParticleUpdates() {
   const particleRef = firebase.database().ref('particles');
   particleRef.on('child_added', snapshot => {
@@ -202,8 +201,6 @@ function listenForParticleUpdates() {
     particles.push(new Particle(p.x, p.y, p.vx, p.vy, p.color));
   });
 }
-
-
 
 function listenForUpdates() {
     const database = firebase.database();
@@ -224,7 +221,6 @@ function listenForUpdates() {
         }
     });
 }
-
 
 function resetView() {
     let centerX = 0, centerY = 0, centerZ = 0;
@@ -257,22 +253,21 @@ function resetView() {
     }
 }
 
-
 function mouseDragged() {
   let newParticle = new Particle(pmouseX - width / 2, pmouseY - height / 2, mouseX - pmouseX, mouseY - pmouseY);
   particles.push(newParticle);
   database.ref('particles').push(newParticle.serialize());
 }
 
-
 function mousePressed() {
   if (mouseButton === LEFT) {
     // Loop through objects and check if the mouse is over any of them
-    objects.forEach(obj => {
+    objects.forEach((obj, index) => {
       // Calculate distance between mouse position and object position in 3D space
       let distance = dist(mouseX - width / 2, mouseY - height / 2, 0, obj.x, obj.y, obj.z);
       // If mouse is over the object, temporarily increase its size
       if (distance < obj.size / 2) {
+        clickedObjectIndex = index; // Store the index of the clicked object
         // Mark object as enlarged
         obj.enlarged = true;
         // Store original size
@@ -284,21 +279,17 @@ function mousePressed() {
           obj.size = obj.originalSize;
           // Mark object as not enlarged
           obj.enlarged = false;
+          clickedObjectIndex = -1; // Reset clicked object index
         }, 1000); // Adjust the delay time as needed
       }
     });
   }
-}
 
-
-
-
-
-  
   // Clear particles if right-clicked
   if (mouseButton === RIGHT) {
     particles = [];
   }
+}
 
 function drawCone(size) {
   beginShape();
