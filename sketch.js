@@ -268,19 +268,22 @@ function mouseDragged() {
 function mousePressed() {
   // Check if the mouse button pressed is the left mouse button
   if (mouseButton === LEFT) {
-    // Randomly choose between changing color and exploding
-    let randomAction = random();
-    if (randomAction < 0.5) {
-      // Change color
-      let particleIndex = int(random(particles.length)); // Choose a random particle
-      particles[particleIndex].color = random(colorScheme); // Change its color to a random color
-    } else {
-      // Explode
-      let particleIndex = int(random(particles.length)); // Choose a random particle
-      particles[particleIndex].explode(); // Make it explode
-      particles.splice(particleIndex, 1); // Remove the original particle
-    }
+    // Loop through objects and check if the mouse is over any of them
+    objects.forEach(obj => {
+      // Calculate distance between mouse position and object position
+      let distance = dist(mouseX - width / 2, mouseY - height / 2, obj.x, obj.y);
+      // If mouse is over the object, temporarily increase its size
+      if (distance < obj.size / 2) {
+        obj.enlarged = true; // Mark object as enlarged
+        obj.size *= 4; // Increase size
+        setTimeout(() => {
+          obj.size /= 4; // Restore original size after a delay
+          obj.enlarged = false; // Mark object as not enlarged
+        }, 1000); // Adjust the delay time as needed
+      }
+    });
   }
+}
   
   // Clear particles if right-clicked
   if (mouseButton === RIGHT) {
