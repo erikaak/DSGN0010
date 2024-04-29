@@ -178,7 +178,7 @@ function draw() {
     } else if (obj.shape === 'sphere') {
       sphere(50); // Increase the size of the sphere
     } else if (obj.shape === 'cone') {
-      drawCone(50); // Increase the size of the cone
+      drawCone(100); // Increase the size of the cone
     }
     pop();
   });
@@ -193,6 +193,7 @@ function draw() {
   // Draw 2D text graphics on top of 3D shapes
   image(graphics, -width / 2, -height / 2);
 }
+
 
 
 
