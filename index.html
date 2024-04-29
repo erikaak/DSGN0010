@@ -84,22 +84,24 @@
             const inputText = document.getElementById('userInput').value.trim();
             const selectedFont = document.getElementById('fontSelector').value;
             const selectedColor = document.getElementById('colorSelector').value;
+            const selectedShape = document.getElementById('shapeSelector').value; // Update selectedShape here
             if (inputText !== "") {
                 // Save to Firebase and clear the input field
-                saveToFirebase(inputText, selectedFont, selectedColor);
+                saveToFirebase(inputText, selectedFont, selectedColor, selectedShape);
                 document.getElementById('userInput').value = '';
             }
         });
 
-        function saveToFirebase(text, font, color) {
+        function saveToFirebase(text, font, color, shape) {
             // Push user input data to Firebase database
             database.ref('userInput').push({
                 text: text,
                 font: font,
                 color: color,
+                shape: shape, // Store the selected shape in the database
                 timestamp: firebase.database.ServerValue.TIMESTAMP
             });
-        }        
+        }
     </script>
 
     <script src="sketch.js"></script>
