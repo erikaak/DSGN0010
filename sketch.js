@@ -173,12 +173,12 @@ function draw() {
     push();
     translate(obj.x, obj.y, obj.z);
     fill(obj.color);
-    if (obj.shape === 'box') {
-      box(50); // Increase the size of the box
-    } else if (obj.shape === 'sphere') {
-      sphere(50); // Increase the size of the sphere
-    } else if (obj.shape === 'cone') {
-      drawCone(100); // Increase the size of the cone
+    if (obj.shape === '0') {
+      box(50);
+    } else if (obj.shape === '1') {
+      sphere(50);
+    } else if (obj.shape === '2') {
+      drawCone(100);
     }
     pop();
   });
