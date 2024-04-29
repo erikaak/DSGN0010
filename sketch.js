@@ -135,9 +135,6 @@ function updateText() {
     }
 }
 
-
-
-
 function draw() {
   background(0);
   orbitControl();
